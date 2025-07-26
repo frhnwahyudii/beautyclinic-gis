@@ -9,19 +9,23 @@ on:
 jobs:
   laravel-tests:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:8.0
-        ports:
-        - 3306:3306
+     services:
+        mysql:
+              image: mysql:8.0
+    ports:
+      - 3306:3306
     env:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: testing
-      options: >-
-        --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
-        --health-interval=10s
-        --health-timeout=5s
-        --health-retries=10
+      MYSQL_DATABASE: sigklinikkecantikan   # <= match ke .env kamu
+      - name: Wait for MySQL
+  run: |
+    for i in {1..30}; do
+      nc -z 127.0.0.1 3306 && echo "MySQL is up!" && break
+      echo "Waiting for MySQL..."
+      sleep 2
+    done
+
+
 
 
     steps:
