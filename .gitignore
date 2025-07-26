@@ -1,24 +1,33 @@
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+# Laravel / PHP
+/vendor
 /node_modules
-/public/build
-/public/hot
 /public/storage
 /storage/*.key
-/storage/pail
-/vendor
-Homestead.json
+.env
+.phpunit.result.cache
 Homestead.yaml
+Homestead.json
+npm-debug.log
+yarn-error.log
+
+# IDE & OS junk
+*.log
+*.DS_Store
+*.idea
+*.vscode
+*.sqlite
+*.zip
 Thumbs.db
+
+# GIS data (optional, tergantung kamu simpan di mana)
+*.geojson
+*.shp
+*.shx
+*.dbf
+*.prj
+*.qgs
+*.qgz
+
+# Auto-generated map tiles (jika ada)
+public/tiles
+
