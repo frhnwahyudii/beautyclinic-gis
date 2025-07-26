@@ -11,18 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:5.7
+        image: mysql:8.0
         ports:
-          - 3306:3306
-        env:
-          MYSQL_DATABASE: testing
-          MYSQL_USER: root
-          MYSQL_ALLOW_EMPTY_PASSWORD: yes
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=3
+        - 3306:3306
+    env:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: testing
+      options: >-
+        --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+        --health-interval=10s
+        --health-timeout=5s
+        --health-retries=10
+
 
     steps:
       - uses: actions/checkout@v2
