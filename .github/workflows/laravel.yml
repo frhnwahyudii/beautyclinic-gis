@@ -24,10 +24,6 @@ jobs:
       echo "Waiting for MySQL..."
       sleep 2
     done
-
-
-
-
     steps:
       - uses: actions/checkout@v2
 
