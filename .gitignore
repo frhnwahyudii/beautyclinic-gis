@@ -9,6 +9,7 @@ Homestead.yaml
 Homestead.json
 npm-debug.log
 yarn-error.log
+dbsigklinik.sql
 
 # IDE & OS junk
 *.log

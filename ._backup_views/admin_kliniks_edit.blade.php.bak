@@ -1,0 +1,1142 @@
+@extends('layouts.app')
+
+@section('title', 'Edit Klinik - ' . $klinik->nama)
+
+@push('styles')
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        margin-bottom: 1rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    /* Page header styling */
+    .page-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        color: white;
+    }
+
+    .page-header h5 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    /* Services container styling */
+    .services-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1.5rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .services-container h6 {
+        color: #0d6efd;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.75rem !important;
+        margin-top: 1.25rem !important;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #0d6efd;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .services-container h6:first-child {
+        margin-top: 0 !important;
+    }
+
+    .service-price-item {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+        min-height: 45px;
+    }
+
+    .service-price-item .form-check-label-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .service-price-item .form-control-sm {
+        width: 110px;
+        height: 32px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        text-align: right;
+    }
+
+    .service-price {
+        display: flex;
+        align-items: center;
+        min-width: 120px;
+        margin-left: 0.5rem;
+    }
+
+    .service-price:before {
+        content: "Rp";
+        margin-right: 0.25rem;
+        color: #495057;
+        font-size: 0.875rem;
+    }
+
+    .services-container .form-check {
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        background: white;
+        border-radius: 6px;
+        border: 1px solid #e9ecef;
+        transition: all 0.2s ease;
+        min-height: 45px;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .services-container .form-check:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .services-container .form-check-input {
+        margin: 0;
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+
+    .services-container .form-check-input:checked + .form-check-label {
+        color: #0d6efd;
+        font-weight: 500;
+    }
+
+    .services-container .form-check-label {
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin: 0;
+        cursor: pointer;
+        color: #495057;
+        flex: 1;
+        padding: 0;
+        display: block;
+        word-wrap: break-word;
+    }
+
+    .services-container .row {
+        margin-bottom: 0.75rem;
+    }
+
+    /* Prevent label text overflow and wrapping issues */
+    .services-container .form-check-label {
+        overflow-wrap: break-word;
+        hyphens: auto;
+        max-width: 100%;
+    }
+
+    /* Ensure consistent checkbox positioning */
+    .services-container .form-check-input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Card styling */
+    .card {
+        border: none;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        font-size: 1.25rem;
+    }
+
+    .section-title {
+        color: #0d6efd;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .section-title i {
+        font-size: 1rem;
+    }
+
+    /* Form styling */
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .services-container {
+            padding: 1rem;
+        }
+
+        .services-container .form-check {
+            margin-bottom: 0.4rem;
+            padding: 0.4rem 0.6rem;
+            min-height: 40px;
+            gap: 0.6rem;
+        }
+
+        .services-container .form-check-input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .services-container .form-check-label {
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+
+        .services-container h6 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem !important;
+            margin-top: 1rem !important;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+        }
+
+        .services-container .row {
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    /* Large screen optimization */
+    @media (min-width: 1200px) {
+        .services-container .form-check {
+            padding: 0.6rem 0.9rem;
+            min-height: 48px;
+            gap: 0.9rem;
+        }
+
+        .services-container .form-check-input {
+            width: 20px;
+            height: 20px;
+        }
+
+        .services-container .form-check-label {
+            font-size: 0.95rem;
+        }
+    }
+
+    .card-title {
+        color: #2c3e50;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    /* Form styling */
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        transition: all 0.2s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    /* Button styling */
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.4);
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .services-container {
+            padding: 1rem;
+        }
+
+        .services-container .form-check-label {
+            font-size: 0.85rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Breadcrumb styling */
+    .breadcrumb {
+        padding: 0;
+        margin: 0;
+        background: transparent;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.875rem;
+    }
+
+    .breadcrumb-item a {
+        text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+        opacity: 0.8;
+    }
+
+    .breadcrumb-item + .breadcrumb-item::before {
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    /* Alert styling */
+    .alert {
+        border-radius: 0.5rem;
+        border: none;
+        margin-bottom: 1.5rem;
+    }
+
+    .alert-success {
+        background-color: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .alert-danger {
+        background-color: #f8d7da;
+        color: #842029;
+    }
+
+    /* Required field indicator */
+    .text-danger {
+        color: #dc3545 !important;
+    }
+
+    /* Button group styling */
+    .btn-group {
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        border-radius: 0.375rem;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        border: none;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        border: none;
+    }
+
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    @media (max-width: 576px) {
+        .page-header {
+            padding: 1rem;
+        }
+
+        .page-header h5 {
+            font-size: 1.25rem;
+        }
+
+        .services-container h6 {
+            font-size: 0.9rem;
+        }
+
+        .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+            width: 100%;
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+<div class="page-header">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5><i class="fas fa-edit me-2"></i>Edit Klinik</h5>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.kliniks.index') }}" class="text-white">Data Klinik</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Edit</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="section-title"><i class="fas fa-info-circle"></i>Informasi Umum</h6>
+                <form action="{{ route('admin.kliniks.update', $klinik) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    @method('PUT')
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="nama" class="form-label">
+                                    <i class="fas fa-clinic-medical"></i>
+                                    Nama Klinik <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama', $klinik->nama) }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="alamat" class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Alamat Lengkap <span class="text-danger">*</span>
+                                </label>
+                                <textarea class="form-control" id="alamat" name="alamat" rows="3" required>{{ old('alamat', $klinik->alamat) }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="foto" class="form-label">
+                                    <i class="fas fa-image"></i>
+                                    Foto Klinik
+                                </label>
+                                @if($klinik->foto)
+                                    <div class="img-preview mb-2">
+                                        <img src="{{ $klinik->foto_url }}" alt="{{ $klinik->nama }}"
+                                             class="img-fluid rounded" style="max-height: 200px; object-fit: cover;">
+                                    </div>
+                                @endif
+                                <input type="file" class="form-control" id="foto" name="foto" accept="image/*">
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Biarkan kosong jika tidak ingin mengubah foto
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="jam_operasional" class="form-label">
+                                    <i class="fas fa-clock"></i>
+                                    Jam Operasional <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="jam_operasional" name="jam_operasional"
+                                       value="{{ old('jam_operasional', $klinik->jam_operasional) }}" required
+                                       placeholder="Contoh: Senin-Jumat, 08:00-17:00">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="deskripsi" class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Deskripsi Klinik
+                                </label>
+                                <textarea class="form-control" id="deskripsi" name="deskripsi" rows="3"
+                                          placeholder="Deskripsi singkat tentang klinik dan layanan yang ditawarkan">{{ old('deskripsi', $klinik->deskripsi) }}</textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="status" class="form-label">
+                                    <i class="fas fa-check-circle"></i>
+                                    Status Klinik <span class="text-danger">*</span>
+                                </label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="pending" {{ old('status', $klinik->status) == 'pending' ? 'selected' : '' }}>
+                                        <i class="fas fa-clock"></i> Pending (Menunggu Review)
+                                    </option>
+                                    <option value="approved" {{ old('status', $klinik->status) == 'approved' ? 'selected' : '' }}>
+                                        <i class="fas fa-check"></i> Approved (Disetujui)
+                                    </option>
+                                    <option value="rejected" {{ old('status', $klinik->status) == 'rejected' ? 'selected' : '' }}>
+                                        <i class="fas fa-times"></i> Rejected (Ditolak)
+                                    </option>
+                                </select>
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Ubah status sesuai hasil review klinik
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Lokasi di Peta *</label>
+                                <div id="map"></div>
+                                <input type="hidden" id="latitude" name="latitude" value="{{ old('latitude', $klinik->latitude) }}" required>
+                                <input type="hidden" id="longitude" name="longitude" value="{{ old('longitude', $klinik->longitude) }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Rentang Harga Layanan *</label>
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <label for="min_price" class="form-label">Harga Minimum (Rp)</label>
+                                        <input type="number" class="form-control" id="min_price" name="min_price"
+                                               value="{{ old('min_price', $klinik->min_price) }}" min="0" step="1000"
+                                               placeholder="100000" required>
+                                        <small class="text-muted">Harga terendah untuk layanan yang tersedia</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="max_price" class="form-label">Harga Maksimum (Rp)</label>
+                                        <input type="number" class="form-control" id="max_price" name="max_price"
+                                               value="{{ old('max_price', $klinik->max_price) }}" min="0" step="1000"
+                                               placeholder="5000000">
+                                        <small class="text-muted">Harga tertinggi (opsional jika harga tetap)</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Services Section - Full Width -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="services" class="form-label">Layanan yang Tersedia *</label>
+                                <div class="services-container">
+                                    <!-- Perawatan Wajah Dasar -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Perawatan Wajah Dasar</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="facial_basic" id="facial_basic"
+                                                        {{ in_array('facial_basic', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="facial_basic">Facial Basic</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[facial_basic]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.facial_basic', $klinik->service_prices['facial_basic'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="facial_acne" id="facial_acne"
+                                                        {{ in_array('facial_acne', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="facial_acne">Facial Acne</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[facial_acne]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.facial_acne', $klinik->service_prices['facial_acne'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="facial_brightening" id="facial_brightening"
+                                                        {{ in_array('facial_brightening', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="facial_brightening">Facial Brightening</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[facial_brightening]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.facial_brightening', $klinik->service_prices['facial_brightening'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="blackhead_removal" id="blackhead_removal"
+                                                        {{ in_array('blackhead_removal', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="blackhead_removal">Blackhead Removal</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[blackhead_removal]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.blackhead_removal', $klinik->service_prices['blackhead_removal'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="hydrafacial" id="hydrafacial"
+                                                        {{ in_array('hydrafacial', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="hydrafacial">HydraFacial</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[hydrafacial]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.hydrafacial', $klinik->service_prices['hydrafacial'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Peeling Treatment -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Peeling Treatment</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="chemical_peel" id="chemical_peel"
+                                                        {{ in_array('chemical_peel', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="chemical_peel">Chemical Peeling</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[chemical_peel]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.chemical_peel', $klinik->service_prices['chemical_peel'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="carbon_peel" id="carbon_peel"
+                                                        {{ in_array('carbon_peel', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="carbon_peel">Carbon Peel</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[carbon_peel]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.carbon_peel', $klinik->service_prices['carbon_peel'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="milk_peel" id="milk_peel"
+                                                        {{ in_array('milk_peel', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="milk_peel">Milk Peel</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[milk_peel]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.milk_peel', $klinik->service_prices['milk_peel'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Laser Treatment -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Laser Treatment</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="laser_rejuvenation" id="laser_rejuvenation"
+                                                        {{ in_array('laser_rejuvenation', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="laser_rejuvenation">Laser Rejuvenation</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[laser_rejuvenation]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.laser_rejuvenation', $klinik->service_prices['laser_rejuvenation'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="laser_acne" id="laser_acne"
+                                                        {{ in_array('laser_acne', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="laser_acne">Laser Acne</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[laser_acne]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.laser_acne', $klinik->service_prices['laser_acne'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="ipl_photorejuvenation" id="ipl_photorejuvenation"
+                                                        {{ in_array('ipl_photorejuvenation', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="ipl_photorejuvenation">IPL Photorejuvenation</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[ipl_photorejuvenation]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.ipl_photorejuvenation', $klinik->service_prices['ipl_photorejuvenation'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="laser_hair_removal" id="laser_hair_removal"
+                                                        {{ in_array('laser_hair_removal', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="laser_hair_removal">Laser Hair Removal</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[laser_hair_removal]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.laser_hair_removal', $klinik->service_prices['laser_hair_removal'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="co2_laser" id="co2_laser"
+                                                        {{ in_array('co2_laser', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="co2_laser">CO2 Laser</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[co2_laser]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.co2_laser', $klinik->service_prices['co2_laser'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Injeksi & Estetik -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Injeksi & Estetik</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="botox" id="botox"
+                                                        {{ in_array('botox', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="botox">Botox</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[botox]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.botox', $klinik->service_prices['botox'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="filler" id="filler"
+                                                        {{ in_array('filler', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="filler">Dermal Filler</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[filler]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.filler', $klinik->service_prices['filler'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="skinbooster" id="skinbooster"
+                                                        {{ in_array('skinbooster', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="skinbooster">Skin Booster</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[skinbooster]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.skinbooster', $klinik->service_prices['skinbooster'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="vitamin_injection" id="vitamin_injection"
+                                                        {{ in_array('vitamin_injection', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="vitamin_injection">Vitamin Injection</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[vitamin_injection]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.vitamin_injection', $klinik->service_prices['vitamin_injection'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="whitening_injection" id="whitening_injection"
+                                                        {{ in_array('whitening_injection', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="whitening_injection">Whitening Injection</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[whitening_injection]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.whitening_injection', $klinik->service_prices['whitening_injection'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Advanced Treatment -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Advanced Treatment</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="microneedling" id="microneedling"
+                                                        {{ in_array('microneedling', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="microneedling">Microneedling</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[microneedling]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.microneedling', $klinik->service_prices['microneedling'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="rf_microneedling" id="rf_microneedling"
+                                                        {{ in_array('rf_microneedling', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="rf_microneedling">RF Microneedling</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[rf_microneedling]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.rf_microneedling', $klinik->service_prices['rf_microneedling'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="hifu" id="hifu"
+                                                        {{ in_array('hifu', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="hifu">HIFU</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[hifu]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.hifu', $klinik->service_prices['hifu'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Specialized Treatment -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Specialized Treatment</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="prp_therapy" id="prp_therapy"
+                                                        {{ in_array('prp_therapy', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="prp_therapy">PRP Therapy</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[prp_therapy]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.prp_therapy', $klinik->service_prices['prp_therapy'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="thread_lift" id="thread_lift"
+                                                        {{ in_array('thread_lift', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="thread_lift">Thread Lift</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[thread_lift]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.thread_lift', $klinik->service_prices['thread_lift'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="cryotherapy" id="cryotherapy"
+                                                        {{ in_array('cryotherapy', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="cryotherapy">Cryotherapy</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[cryotherapy]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.cryotherapy', $klinik->service_prices['cryotherapy'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="sclerotherapy" id="sclerotherapy"
+                                                        {{ in_array('sclerotherapy', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="sclerotherapy">Sclerotherapy</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[sclerotherapy]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.sclerotherapy', $klinik->service_prices['sclerotherapy'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Body Treatment -->
+                                    <h6 class="mt-3 mb-2 text-primary fw-bold">Body Treatment</h6>
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="body_contouring" id="body_contouring"
+                                                        {{ in_array('body_contouring', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="body_contouring">Body Contouring</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[body_contouring]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.body_contouring', $klinik->service_prices['body_contouring'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="cavitation" id="cavitation"
+                                                        {{ in_array('cavitation', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="cavitation">Cavitation</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[cavitation]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.cavitation', $klinik->service_prices['cavitation'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="radiofrequency" id="radiofrequency"
+                                                        {{ in_array('radiofrequency', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="radiofrequency">Radiofrequency</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[radiofrequency]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.radiofrequency', $klinik->service_prices['radiofrequency'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xl-6 col-lg-6 col-md-12">
+                                            <div class="form-check service-price-item">
+                                                <div class="form-check-label-wrapper">
+                                                    <input class="form-check-input" type="checkbox" name="services[]" value="coolsculpting" id="coolsculpting"
+                                                        {{ in_array('coolsculpting', old('services', $klinik->services ?? [])) ? 'checked' : '' }}>
+                                                    <label class="form-check-label" for="coolsculpting">CoolSculpting</label>
+                                                </div>
+                                                <div class="service-price">
+                                                    <input type="number" class="form-control form-control-sm"
+                                                           name="prices[coolsculpting]"
+                                                           placeholder="Harga"
+                                                           value="{{ old('prices.coolsculpting', $klinik->service_prices['coolsculpting'] ?? '') }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <h5 class="mb-3 text-primary">Informasi Kontak</h5>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="telepon" class="form-label">Nomor Telepon</label>
+                                <input type="text" class="form-control" id="telepon" name="telepon" value="{{ old('telepon', $klinik->telepon) }}"
+                                       placeholder="Contoh: 0741-xxxxxx">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $klinik->email) }}"
+                                       placeholder="contoh@email.com">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="website" class="form-label">Website</label>
+                                <input type="url" class="form-control" id="website" name="website" value="{{ old('website', $klinik->website) }}"
+                                       placeholder="https://www.example.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="instagram" class="form-label">Instagram</label>
+                                <input type="text" class="form-control" id="instagram" name="instagram"
+                                       value="{{ old('instagram', $klinik->instagram) }}" placeholder="@username">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="facebook" class="form-label">Facebook</label>
+                                <input type="text" class="form-control" id="facebook" name="facebook"
+                                       value="{{ old('facebook', $klinik->facebook) }}" placeholder="Username Facebook">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="twitter" class="form-label">Twitter</label>
+                                <input type="text" class="form-control" id="twitter" name="twitter" value="{{ old('twitter', $klinik->twitter) }}"
+                                       placeholder="@username">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ route('admin.kliniks.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Kembali
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Simpan Perubahan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inisialisasi peta
+    var map = L.map('map').setView([{{ $klinik->latitude }}, {{ $klinik->longitude }}], 13);
+    var marker = L.marker([{{ $klinik->latitude }}, {{ $klinik->longitude }}]).addTo(map);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Fungsi untuk memindahkan marker
+    map.on('click', function(e) {
+        marker.setLatLng(e.latlng);
+        document.getElementById('latitude').value = e.latlng.lat;
+        document.getElementById('longitude').value = e.latlng.lng;
+    });
+});
+</script>
+@endpush

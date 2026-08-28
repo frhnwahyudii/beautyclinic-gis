@@ -1,0 +1,394 @@
+@extends('layouts.app')
+
+@section('title', $klinik->nama)
+
+@push('styles')
+<style>
+    #map {
+        height: 300px;
+        width: 100%;
+        border-radius: 0.375rem;
+    }
+    .social-links a {
+        text-decoration: none;
+        margin-right: 15px;
+        color: #0d6efd;
+        display: inline-flex;
+        align-items: center;
+        padding: 0.375rem 0.75rem;
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        transition: all 0.2s;
+    }
+    .social-links a:hover {
+        background-color: #e9ecef;
+        color: #0a58ca;
+    }
+    .social-links a i {
+        margin-right: 0.5rem;
+    }
+    .detail-section {
+        padding: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+    }
+    .detail-section h6 {
+        color: #495057;
+        margin-bottom: 0.75rem;
+    }
+    .badge {
+        padding: 0.5rem 0.75rem;
+        font-weight: 500;
+    }
+    .services-wrapper {
+        background-color: #fff;
+        border-radius: 0.5rem;
+    }
+
+    .service-category {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .service-category h6 {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        margin-bottom: 1.25rem !important;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #3498db;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .service-item {
+        padding: 0.5rem;
+        border-bottom: 1px solid #f8f9fa;
+        transition: all 0.2s;
+    }
+
+    .service-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .service-item:last-child {
+        border-bottom: none;
+    }
+
+    .service-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border: 1px solid #e9ecef;
+        border-radius: 6px;
+        margin-bottom: 0.5rem;
+        background: #ffffff;
+        transition: all 0.2s ease;
+    }
+
+    .service-item:hover {
+        border-color: #0d6efd;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.1);
+        transform: translateY(-1px);
+    }
+
+    .service-item .service-name {
+        font-size: 0.95rem;
+        color: #2c3e50;
+        font-weight: 500;
+    }
+
+    .service-item .service-price {
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        color: #1565c0;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        min-width: 120px;
+        text-align: right;
+        border: 1px solid #bbdefb;
+    }
+    .contact-info {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .contact-info i {
+        margin-right: 0.5rem;
+        color: #6c757d;
+    }
+</style>
+@endpush
+
+@section('content')
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            @if($klinik->foto)
+                <img src="{{ $klinik->foto_url }}" class="card-img-top" alt="{{ $klinik->nama }}" style="max-height: 400px; object-fit: cover;">
+            @else
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                </div>
+            @endif
+            <div class="card-body">
+                <h4 class="card-title mb-4">{{ $klinik->nama }}</h4>
+
+                @if($klinik->deskripsi)
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-info-circle me-2"></i>Deskripsi
+                    </h6>
+                    <p class="mb-0">{{ $klinik->deskripsi }}</p>
+                </div>
+                @endif
+
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-geo-alt me-2"></i>Alamat
+                    </h6>
+                    <p class="mb-0">{{ $klinik->alamat }}</p>
+                </div>
+
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-clock me-2"></i>Jam Operasional
+                    </h6>
+                    <p class="mb-0">{{ $klinik->jam_operasional }}</p>
+                </div>
+
+                @if($klinik->min_price || $klinik->max_price)
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-tag me-2"></i>Rentang Harga
+                    </h6>
+                    <span class="badge bg-info text-dark">
+                        {{ $klinik->price_range_display }}
+                    </span>
+                </div>
+                @endif
+
+                @if($klinik->services && count($klinik->services) > 0)
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-list-check me-2"></i>Layanan dan Harga
+                    </h6>
+                    <div class="services-wrapper">
+                        <!-- Perawatan Wajah Dasar -->
+                        @php
+                            $services = collect($klinik->services);
+                            $facialServices = $services->intersect(['facial_basic', 'facial_acne', 'facial_brightening', 'blackhead_removal', 'hydrafacial']);
+                            $peelingServices = $services->intersect(['chemical_peel', 'carbon_peel', 'milk_peel']);
+                            $laserServices = $services->intersect(['laser_rejuvenation', 'laser_acne', 'ipl_photorejuvenation', 'laser_hair_removal', 'co2_laser']);
+                            $injectionServices = $services->intersect(['botox', 'filler', 'skinbooster', 'vitamin_injection', 'whitening_injection']);
+                            $advancedServices = $services->intersect(['microneedling', 'rf_microneedling', 'hifu']);
+                            $specializedServices = $services->intersect(['prp_therapy', 'thread_lift', 'cryotherapy', 'sclerotherapy']);
+                            $bodyServices = $services->intersect(['body_contouring', 'cavitation', 'radiofrequency', 'coolsculpting']);
+                        @endphp
+
+                        @if($facialServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Perawatan Wajah Dasar</h6>
+                            <div class="service-list">
+                                @foreach($facialServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($peelingServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Peeling Treatment</h6>
+                            <div class="service-list">
+                                @foreach($peelingServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($laserServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Laser Treatment</h6>
+                            <div class="service-list">
+                                @foreach($laserServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($injectionServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Injeksi & Estetik</h6>
+                            <div class="service-list">
+                                @foreach($injectionServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($advancedServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Advanced Treatment</h6>
+                            <div class="service-list">
+                                @foreach($advancedServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($specializedServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Specialized Treatment</h6>
+                            <div class="service-list">
+                                @foreach($specializedServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+
+                        @if($bodyServices->isNotEmpty())
+                        <div class="service-category mb-3">
+                            <h6 class="fw-semibold text-primary mb-2">Body Treatment</h6>
+                            <div class="service-list">
+                                @foreach($bodyServices as $service)
+                                <div class="service-item">
+                                    <span class="service-name">{{ \App\Models\Klinik::SERVICE_NAMES[$service] }}</span>
+                                    <span class="service-price">
+                                        Rp {{ number_format($klinik->service_prices[$service] ?? 0, 0, ',', '.') }}
+                                    </span>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        @endif
+                    </div>
+                </div>
+                @endif
+
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-person-lines-fill me-2"></i>Kontak
+                    </h6>
+                    <div class="contact-info-list">
+                        @if($klinik->telepon)
+                            <div class="contact-info">
+                                <i class="bi bi-telephone"></i>
+                                <a href="tel:{{ $klinik->telepon }}" class="text-decoration-none">{{ $klinik->telepon }}</a>
+                            </div>
+                        @endif
+
+                        @if($klinik->email)
+                            <div class="contact-info">
+                                <i class="bi bi-envelope"></i>
+                                <a href="mailto:{{ $klinik->email }}" class="text-decoration-none">{{ $klinik->email }}</a>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+
+                @if($klinik->instagram || $klinik->facebook || $klinik->twitter || $klinik->website)
+                <div class="detail-section">
+                    <h6 class="fw-bold">
+                        <i class="bi bi-share me-2"></i>Media Sosial
+                    </h6>
+                    <div class="social-links">
+                        @if($klinik->instagram)
+                            <a href="https://instagram.com/{{ $klinik->instagram }}" target="_blank">
+                                <i class="bi bi-instagram"></i> Instagram
+                            </a>
+                        @endif
+
+                        @if($klinik->facebook)
+                            <a href="https://facebook.com/{{ $klinik->facebook }}" target="_blank">
+                                <i class="bi bi-facebook"></i> Facebook
+                            </a>
+                        @endif
+
+                        @if($klinik->twitter)
+                            <a href="https://twitter.com/{{ $klinik->twitter }}" target="_blank">
+                                <i class="bi bi-twitter"></i> Twitter
+                            </a>
+                        @endif
+
+                        @if($klinik->website)
+                            <a href="{{ $klinik->website }}" target="_blank">
+                                <i class="bi bi-globe"></i> Website
+                            </a>
+                        @endif
+                    </div>
+                </div>
+                @endif
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Lokasi</h5>
+                <div id="map"></div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Inisialisasi peta
+    var map = L.map('map').setView([{{ $klinik->latitude }}, {{ $klinik->longitude }}], 15);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Tambah marker
+    L.marker([{{ $klinik->latitude }}, {{ $klinik->longitude }}])
+        .addTo(map)
+        .bindPopup("{{ $klinik->nama }}");
+});
+</script>
+@endpush

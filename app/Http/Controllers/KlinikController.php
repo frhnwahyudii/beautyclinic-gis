@@ -28,10 +28,22 @@ class KlinikController extends Controller
 
     public function store(Request $request)
     {
+        // ── Anti-Bot: Honeypot field — bot mengisi field tersembunyi, manusia tidak ──
+        if ($request->filled('company_website')) {
+            // Balas sukses palsu agar bot tidak tahu form diblokir
+            return redirect()->route('home')->with('success', 'Data klinik berhasil dikirim dan menunggu persetujuan admin.');
+        }
+
+        // ── Anti-Bot: Time-trap — submit terlalu cepat dianggap bot ──
+        $formStartedAt = (int) $request->input('form_started_at', 0);
+        if ($formStartedAt > 0 && (time() - $formStartedAt) < 5) {
+            return redirect()->route('home')->with('success', 'Data klinik berhasil dikirim dan menunggu persetujuan admin.');
+        }
+
         $validatedData = $request->validate([
             'nama' => 'required|string|max:255',
             'alamat' => 'required|string',
-            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'foto' => 'required|image|mimes:jpeg,png,jpg|max:2048|dimensions:max_width=4000,max_height=4000',
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'jam_operasional' => 'required|string',
@@ -41,7 +53,19 @@ class KlinikController extends Controller
             'facebook' => 'nullable|string|max:255',
             'twitter' => 'nullable|string|max:255',
             'website' => 'nullable|url|max:255',
+            'deskripsi' => 'nullable|string|max:1000',
+            'min_price' => 'required|integer|min:0',
+            'max_price' => 'nullable|integer|min:0|gte:min_price',
+            'services' => 'required|array|min:1',
+            'services.*' => 'in:facial_basic,facial_acne,facial_brightening,blackhead_removal,hydrafacial,chemical_peel,carbon_peel,milk_peel,laser_rejuvenation,laser_acne,ipl_photorejuvenation,laser_hair_removal,co2_laser,botox,filler,skinbooster,vitamin_injection,whitening_injection,microneedling,rf_microneedling,hifu,prp_therapy,thread_lift,cryotherapy,sclerotherapy,body_contouring,cavitation,radiofrequency,coolsculpting'
         ]);
+
+        // Normalisasi input teks
+        $validatedData['nama'] = trim($validatedData['nama']);
+        $validatedData['alamat'] = trim($validatedData['alamat']);
+        if (!empty($validatedData['email'])) {
+            $validatedData['email'] = strtolower(trim($validatedData['email']));
+        }
 
         if ($request->hasFile('foto')) {
             $foto = $request->file('foto');
@@ -81,6 +105,10 @@ class KlinikController extends Controller
             'twitter' => 'nullable|string|max:255',
             'website' => 'nullable|url|max:255',
             'status' => 'required|in:pending,approved,rejected',
+            'services' => 'required|array|min:1',
+            'services.*' => 'in:facial_basic,facial_acne,facial_brightening,blackhead_removal,hydrafacial,chemical_peel,carbon_peel,milk_peel,laser_rejuvenation,laser_acne,ipl_photorejuvenation,laser_hair_removal,co2_laser,botox,filler,skinbooster,vitamin_injection,whitening_injection,microneedling,rf_microneedling,hifu,prp_therapy,thread_lift,cryotherapy,sclerotherapy,body_contouring,cavitation,radiofrequency,coolsculpting',
+            'prices' => 'required|array',
+            'prices.*' => 'nullable|integer|min:0'
         ]);
 
         if ($request->hasFile('foto')) {

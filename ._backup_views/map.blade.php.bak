@@ -1,0 +1,734 @@
+@extends('layouts.app')
+@section('title', 'Peta Klinik Kecantikan Kota Jambi')
+@push('styles')
+<style>
+    #map {
+        height: 500px;
+        width: 100%;
+        border-radius: 0.5rem;
+    }
+    .map-tiles {
+        filter: saturate(1.2) contrast(1.1);
+    }
+    .custom-marker i {
+        position: relative;
+        color: #dc3545;
+        font-size: 40px;
+        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    }
+    .custom-marker i i {
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 14px;
+        color: white;
+    }
+    .hero-section {
+        position: relative;
+        z-index: 1;
+    }
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    .hero-section button,
+    .hero-section a {
+        position: relative;
+        z-index: 3;
+    }
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+        padding: 4rem 0;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-pattern {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.1;
+        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M54.627 0l.83.828-1.415 1.415L51.8 0h2.827zM5.373 0l-.83.828L5.96 2.243 8.2 0H5.374zM48.97 0l3.657 3.657-1.414 1.414L46.143 0h2.828zM11.03 0L7.372 3.657 8.787 5.07 13.857 0H11.03zm32.284 0L49.8 6.485 48.384 7.9l-7.9-7.9h2.83zM16.686 0L10.2 6.485 11.616 7.9l7.9-7.9h-2.83zM22.344 0L13.858 8.485 15.272 9.9l7.9-7.9h-.828zm5.656 0L19.515 8.485 17.343 10.657l7.9-7.9h2.757zm5.656 0L24.172 8.485 22 10.657l7.9-7.9h2.756zM38.313 0L29.828 8.485 27.657 10.657l7.9-7.9h2.756zM43.97 0L35.485 8.485 33.313 10.657l7.9-7.9h2.757zM49.626 0L41.142 8.485 38.97 10.657l7.9-7.9h2.756zM55.285 0L46.8 8.485 44.627 10.657l7.9-7.9h2.758zM54.627 5.657L46.142 14.142 43.97 16.314l7.9-7.9h2.757zm5.656 0L51.8 14.142l-2.172 2.172 7.9-7.9h2.756zM5.373 5.657L13.858 14.142 16.03 16.314l-7.9-7.9H5.374zm5.656 0L19.514 14.142l2.172 2.172-7.9-7.9h-2.757zm5.656 0L24.172 14.142l2.172 2.172-7.9-7.9h-2.757zm5.656 0L29.828 14.142 32 16.314l-7.9-7.9h-2.757zm5.657 0L35.485 14.142l2.172 2.172-7.9-7.9h-2.757zm5.656 0L41.142 14.142l2.172 2.172-7.9-7.9h-2.757zm5.656 0L46.8 14.142l2.172 2.172-7.9-7.9h-2.757zm-11.313 0L35.485 8.485 33.313 10.657l7.9-7.9h2.757zM43.97 5.657L35.485 14.142 33.313 16.314l7.9-7.9h2.757zM49.626 5.657L41.142 14.142 38.97 16.314l7.9-7.9h2.756zM54.627 11.314L46.142 19.8l-2.172 2.172 7.9-7.9h2.757zm5.656 0L51.8 19.8l-2.172 2.172 7.9-7.9h2.756zM5.373 11.314L13.858 19.8l2.172 2.172-7.9-7.9H5.374zm5.656 0L19.514 19.8l2.172 2.172-7.9-7.9h-2.757zm5.656 0L24.172 19.8l2.172 2.172-7.9-7.9h-2.757zm5.656 0L29.828 19.8 32 21.971l-7.9-7.9h-2.757zm5.657 0L35.485 19.8l2.172 2.172-7.9-7.9h-2.757zm5.656 0L41.142 19.8l2.172 2.172-7.9-7.9h-2.757zm5.656 0L46.8 19.8l2.172 2.172-7.9-7.9h-2.757zm-11.313 0L35.485 14.142 33.313 16.314l7.9-7.9h2.757zM43.97 11.314L35.485 19.8l-2.172 2.172 7.9-7.9h2.757zM49.626 11.314L41.142 19.8l-2.172 2.172 7.9-7.9h2.756zM54.627 16.971L46.142 25.456l-2.172 2.172 7.9-7.9h2.757zm5.656 0L51.8 25.456l-2.172 2.172 7.9-7.9h2.756zM5.373 16.971L13.858 25.456l2.172 2.172-7.9-7.9H5.374zm5.656 0L19.514 25.456l2.172 2.172-7.9-7.9h-2.757zm5.656 0L24.172 25.456l2.172 2.172-7.9-7.9h-2.757zm5.656 0L29.828 25.456 32 27.628l-7.9-7.9h-2.757z' fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+    }
+    .feature-card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        transition: transform 0.2s;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    .feature-icon {
+        width: 64px;
+        height: 64px;
+        margin: 0 auto 1rem;
+        background: var(--primary-color);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+    }
+    .search-box {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+    /* Filter Section */
+    .filter-section {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 1rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+    }
+    .filter-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        border: 1px solid #e9ecef;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .filter-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background: linear-gradient(90deg, #0d6efd, #0056b3);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    .filter-card:hover::before {
+        transform: scaleX(1);
+    }
+    .filter-card:hover {
+        box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
+        transform: translateY(-3px);
+    }
+    .filter-card h6 {
+        color: #0d6efd;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .filter-card h6 i {
+        margin-right: 0.5rem;
+    }
+    .form-control, .form-select {
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        padding: 0.675rem 1rem;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+        color: #2c3e50;
+        background-color: #fff;
+    }
+    .form-control:focus, .form-select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.15);
+        background-color: #fff;
+    }
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 0.75rem center;
+        background-size: 16px 12px;
+    }
+    .form-select:focus {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%233498db' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    }
+    .form-select optgroup {
+        font-weight: 600;
+        color: #2c3e50;
+        padding: 0.5rem 0;
+    }
+    .form-select option {
+        padding: 0.5rem 1rem;
+        color: #2c3e50;
+    }
+    .price-badge {
+        display: inline-block;
+        padding: 0.4rem 0.8rem;
+        border-radius: 1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .price-murah {
+        background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+    .price-menengah {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+    .price-mahal {
+        background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+    /* Custom marker icons based on price */
+    .marker-murah i {
+        color: #28a745;
+        font-size: 40px;
+        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    }
+    .marker-menengah i {
+        color: #ffc107;
+        font-size: 40px;
+        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    }
+    .marker-mahal i {
+        color: #dc3545;
+        font-size: 40px;
+        filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+    }
+    .custom-marker i i {
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 14px;
+        color: white;
+    }
+    .service-tag {
+        display: inline-block;
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        color: white;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin: 0.125rem;
+        border: 1px solid #0056b3;
+        transition: all 0.2s ease;
+    }
+    .service-tag:hover {
+        transform: scale(1.05);
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.3);
+    }
+    /* Enhanced button styling */
+    .btn-primary {
+        background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(13, 110, 253, 0.4);
+        background: linear-gradient(135deg, #0056b3 0%, #004494 100%);
+    }
+    /* Price Filter Chips Style GoFood */
+    .price-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+    }
+    .price-chip {
+        border-radius: 16px;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+        border: 1px solid #e0e0e0;
+        background: #f8f9fa;
+        color: #495057;
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+    .price-chip:hover {
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+        background: rgba(78, 115, 223, 0.05);
+        transform: translateY(-1px);
+    }
+    .price-chip.active {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+    .price-chip i {
+        font-size: 0.7rem;
+        margin-right: 0.3rem;
+    }
+    .price-filter-container input[type="number"] {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+    .price-filter-container input[type="number"]:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.15);
+    }
+</style>
+@endpush
+
+@section('content')
+<!-- Hero Section -->
+<div class="hero-section text-white">
+    <div class="hero-pattern"></div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-4">Temukan Klinik Kecantikan di Kota Jambi</h1>
+                <p class="lead mb-4">Sistem Informasi Geografis untuk memudahkan Anda menemukan klinik kecantikan terdekat dengan informasi lengkap.</p>
+                <a href="{{ route('klinik.create') }}" class="btn btn-outline-light btn-lg px-4" data-aos="zoom-in" data-aos-delay="200">
+                    <i class="bi bi-plus-circle"></i> Daftarkan Klinik
+                </a>
+            </div>
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="search-box">
+                    <h5 class="text-white mb-3">Statistik Klinik</h5>
+                    <div class="row g-3">
+                        <div class="col-sm-4" data-aos="fade-up" data-aos-delay="100">
+                            <div class="text-center">
+                                <h3 class="mb-0">{{ $kliniks->count() }}</h3>
+                                <small>Total Klinik</small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" data-aos="fade-up" data-aos-delay="200">
+                            <div class="text-center">
+                                <h3 class="mb-0">{{ $kliniks->where('status', 'approved')->count() }}</h3>
+                                <small>Terverifikasi</small>
+                            </div>
+                        </div>
+                        <div class="col-sm-4" data-aos="fade-up" data-aos-delay="300">
+                            <div class="text-center">
+                                <h3 class="mb-0">{{ \App\Models\Klinik::where('status', 'pending')->count() }}</h3>
+                                <small>Menunggu</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="container mb-4" data-aos="fade-up">
+    <div class="filter-section">
+        <div class="row g-4">
+            <!-- Search -->
+            <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+                <div class="filter-card">
+                    <h6 class="mb-3"><i class="bi bi-search"></i> Pencarian Klinik</h6>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Cari nama klinik atau alamat...">
+                </div>
+            </div>
+
+            <!-- Price Filter -->
+            <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+                <div class="filter-card">
+                    <h6 class="mb-3"><i class="bi bi-currency-dollar"></i> Rentang Harga</h6>
+                    <div class="price-filter-container">
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <input type="number" class="form-control form-control-sm" id="minPrice" placeholder="Min (Rp)" min="0" step="1000">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" class="form-control form-control-sm" id="maxPrice" placeholder="Max (Rp)" min="0" step="1000">
+                            </div>
+                        </div>
+                        <div class="price-chips">
+                            <button type="button" class="btn btn-outline-primary btn-sm price-chip" data-min="0" data-max="500000">
+                                <i class="bi bi-tag"></i> ≤ 500rb
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm price-chip" data-min="500000" data-max="1500000">
+                                <i class="bi bi-tag"></i> 500rb - 1.5jt
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm price-chip" data-min="1500000" data-max="3000000">
+                                <i class="bi bi-tag"></i> 1.5jt - 3jt
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm price-chip" data-min="3000000" data-max="">
+                                <i class="bi bi-tag"></i> ≥ 3jt
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Filter -->
+            <div class="col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+                <div class="filter-card">
+                    <h6 class="mb-3"><i class="bi bi-tags"></i> Layanan</h6>
+                    <select class="form-select" id="serviceFilter">
+                        <option value="">Semua Layanan</option>
+                        <optgroup label="Perawatan Wajah Dasar">
+                            <option value="facial_acne">Facial Acne</option>
+                            <option value="facial_whitening">Facial Whitening</option>
+                            <option value="facial_rejuvenation">Facial Rejuvenation</option>
+                            <option value="facial_oxygen">Facial Oxygen</option>
+                            <option value="hydrafacial">HydraFacial</option>
+                        </optgroup>
+                        <optgroup label="Peeling Treatment">
+                            <option value="chemical_peeling">Chemical Peeling</option>
+                            <option value="mandelic_peel">Mandelic Peel</option>
+                            <option value="botanical_peeling">Botanical Peeling</option>
+                        </optgroup>
+                        <optgroup label="Laser Treatment">
+                            <option value="laser_co2">Laser CO2</option>
+                            <option value="ipl_treatment">IPL Treatment</option>
+                            <option value="picosure_laser">Picosure Laser</option>
+                            <option value="qswitch_laser">Q-Switch Laser</option>
+                            <option value="laser_melasma">Laser Melasma</option>
+                        </optgroup>
+                        <optgroup label="Injeksi & Estetik">
+                            <option value="botox_injection">Botox Injection</option>
+                            <option value="dermal_filler">Dermal Filler</option>
+                            <option value="skin_booster">Skin Booster</option>
+                            <option value="mesotherapy">Mesotherapy</option>
+                            <option value="vitamin_injection">Vitamin Injection</option>
+                        </optgroup>
+                        <optgroup label="Advanced Treatment">
+                            <option value="hifu_treatment">HIFU Treatment</option>
+                            <option value="radiofrequency">Radio Frequency</option>
+                            <option value="thread_lift">Thread Lift</option>
+                            <option value="microneedling">Microneedling</option>
+                            <option value="prp_treatment">PRP Treatment</option>
+                        </optgroup>
+                        <optgroup label="Specialized Treatment">
+                            <option value="acne_scar_treatment">Acne Scar Treatment</option>
+                            <option value="pigmentation_removal">Pigmentation Removal</option>
+                            <option value="hair_removal">Hair Removal</option>
+                            <option value="tattoo_removal">Tattoo Removal</option>
+                        </optgroup>
+                        <optgroup label="Body Treatment">
+                            <option value="cryolipolysis">Cryolipolysis</option>
+                            <option value="slimming_treatment">Slimming Treatment</option>
+                            <option value="body_contouring">Body Contouring</option>
+                            <option value="body_whitening">Body Whitening</option>
+                        </optgroup>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12 text-center" data-aos="fade-up" data-aos-delay="400">
+                <button class="btn btn-primary btn-lg px-4 me-3" id="applyFilters">
+                    <i class="bi bi-funnel"></i> Terapkan Filter
+                </button>
+                <button class="btn btn-outline-secondary reset-filters" id="resetFilters">
+                    <i class="bi bi-arrow-clockwise"></i> Reset
+                </button>
+                <div class="mt-2">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i>
+                        Pilih filter yang diinginkan, kemudian klik "Terapkan Filter" untuk melihat hasil
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Results Info -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="filterResults" class="alert alert-info d-none">
+                    <i class="bi bi-info-circle"></i>
+                    <span id="resultsText">Menampilkan semua klinik</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Map Section -->
+<div class="container mb-5" data-aos="fade-up" data-aos-delay="200">
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-4">
+            <h3 class="card-title mb-4">Peta Sebaran Klinik Kecantikan</h3>
+            <div id="map"></div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+let map;
+let userMarker;
+let markers = [];
+let allKliniks = [];
+let filteredMarkers = [];
+
+// Initialize map configuration
+window.mapConfig = {
+    defaultZoom: 13,
+    minZoom: 10,
+    maxZoom: 18
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeMap();
+    setupFilterEventListeners();
+});
+
+function initializeMap() {
+    // Inisialisasi peta
+    map = L.map('map', {
+        center: [-1.6096639, 103.6131639],
+        zoom: window.mapConfig.defaultZoom,
+        minZoom: window.mapConfig.minZoom,
+        maxZoom: window.mapConfig.maxZoom,
+        zoomControl: true,
+        scrollWheelZoom: true
+    });
+
+    // Force set zoom setelah inisialisasi
+    setTimeout(() => {
+        map.setZoom(window.mapConfig.defaultZoom);
+    }, 100);
+
+    // Tambahkan tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19,
+        className: 'map-tiles'
+    }).addTo(map);
+
+    // Data klinik dari controller
+    allKliniks = @json($kliniks);
+
+    // Load all markers initially
+    loadMarkers(allKliniks);
+}
+
+function loadMarkers(kliniks) {
+    // Clear existing markers
+    clearMarkers();
+
+    kliniks.forEach(function(klinik) {
+        // Determine price category based on min_price
+        let priceCategory = 'menengah'; // default
+        if (klinik.min_price && klinik.min_price <= 500000) {
+            priceCategory = 'murah';
+        } else if (klinik.min_price && klinik.min_price >= 2500000) {
+            priceCategory = 'mahal';
+        }
+
+        const markerClass = `marker-${priceCategory}`;
+
+        var klinikIcon = L.divIcon({
+            className: `custom-marker ${markerClass}`,
+            html: '<i class="bi bi-geo-alt-fill"><i class="bi bi-hospital"></i></i>',
+            iconSize: [40, 40],
+            iconAnchor: [20, 40],
+            popupAnchor: [0, -40]
+        });
+
+        var marker = L.marker([klinik.latitude, klinik.longitude], {
+            icon: klinikIcon
+        }).addTo(map);
+
+        // Enhanced popup content with price and services from database
+        const services = klinik.services || [];
+        const priceDisplay = getPriceRangeDisplay(klinik.min_price, klinik.max_price);
+
+        var popupContent = `
+            <div class="popup-content text-center p-2">
+                ${klinik.foto ? `<img src="${klinik.foto_url}" class="img-fluid rounded mb-2" style="max-height: 100px;">` : ''}
+                <h6 class="mb-2">${klinik.nama}</h6>
+                <p class="small mb-2">${klinik.alamat}</p>
+                ${klinik.deskripsi ? `<p class="small mb-2 text-muted">${klinik.deskripsi}</p>` : ''}
+                <p class="small mb-2"><i class="bi bi-clock"></i> ${klinik.jam_operasional}</p>
+                <div class="mb-2">
+                    <span class="price-badge">${priceDisplay}</span>
+                </div>
+                <div class="mb-2">
+                    ${services.map(service => `<span class="service-tag">${getServiceDisplay(service)}</span>`).join('')}
+                </div>
+                <a href="/klinik/${klinik.id}" class="btn btn-sm btn-primary w-100">
+                    <i class="bi bi-info-circle"></i> Lihat Detail
+                </a>
+            </div>
+        `;
+
+        marker.bindPopup(popupContent);
+
+        // Store additional data with marker
+        marker.klinikData = {
+            ...klinik,
+            priceCategory: priceCategory,
+            services: services
+        };
+
+        markers.push(marker);
+    });
+
+    // Set default zoom view untuk seluruh kota
+    map.setZoom(12);
+
+    // Fit bounds jika ada marker
+    if (markers.length > 0) {
+        let group = new L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.5));
+    }
+
+    updateFilterResults(markers.length, allKliniks.length);
+}
+
+function clearMarkers() {
+    markers.forEach(marker => {
+        map.removeLayer(marker);
+    });
+    markers = [];
+}
+
+function setupFilterEventListeners() {
+    // Apply filters button
+    document.getElementById('applyFilters').addEventListener('click', applyFilters);
+
+    // Reset filters button
+    document.getElementById('resetFilters').addEventListener('click', resetFilters);
+}
+
+function highlightApplyButton() {
+    const applyBtn = document.getElementById('applyFilters');
+    applyBtn.classList.add('btn-warning');
+    applyBtn.innerHTML = '<i class="bi bi-funnel"></i> Terapkan Filter';
+}
+
+function resetApplyButton() {
+    const applyBtn = document.getElementById('applyFilters');
+    applyBtn.classList.remove('btn-warning');
+    applyBtn.innerHTML = '<i class="bi bi-funnel"></i> Terapkan Filter';
+}
+
+function applyFilters() {
+    // Reset apply button appearance
+    resetApplyButton();
+
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+    const minPrice = parseInt(document.getElementById('minPrice').value) || 0;
+    const maxPrice = parseInt(document.getElementById('maxPrice').value) || Number.MAX_SAFE_INTEGER;
+    const serviceFilter = document.getElementById('serviceFilter').value;
+
+    let filteredKliniks = allKliniks.filter(klinik => {
+        // Search filter - search in name, address, and description
+        const matchesSearch = !searchTerm ||
+            klinik.nama.toLowerCase().includes(searchTerm) ||
+            klinik.alamat.toLowerCase().includes(searchTerm) ||
+            (klinik.deskripsi && klinik.deskripsi.toLowerCase().includes(searchTerm));
+
+        // Price filter - check if klinik price range overlaps with filter range
+        const klinikMinPrice = klinik.min_price || 0;
+        const klinikMaxPrice = klinik.max_price || klinik.min_price || Number.MAX_SAFE_INTEGER;
+        const matchesPrice = (minPrice === 0 && maxPrice === Number.MAX_SAFE_INTEGER) ||
+                           (klinikMinPrice <= maxPrice && klinikMaxPrice >= minPrice);
+
+        // Service filter - use actual services array from database
+        const klinikServices_array = klinik.services || [];
+        const matchesService = !serviceFilter || klinikServices_array.includes(serviceFilter);
+
+        return matchesSearch && matchesPrice && matchesService;
+    });
+
+    loadMarkers(filteredKliniks);
+    updateFilterResults(filteredKliniks.length, allKliniks.length);
+}
+
+function resetFilters() {
+    // Reset apply button appearance
+    resetApplyButton();
+
+    document.getElementById('searchInput').value = '';
+    document.getElementById('minPrice').value = '';
+    document.getElementById('maxPrice').value = '';
+    document.getElementById('serviceFilter').value = '';
+
+    loadMarkers(allKliniks);
+}
+
+function updateFilterResults(shown, total) {
+    const resultsText = document.getElementById('resultsText');
+    if (shown === total) {
+        resultsText.textContent = `Menampilkan semua ${total} klinik`;
+    } else {
+        resultsText.textContent = `Menampilkan ${shown} dari ${total} klinik`;
+    }
+}
+
+function getPriceRangeDisplay(minPrice, maxPrice) {
+    if (minPrice && maxPrice) {
+        return `Rp ${formatPrice(minPrice)} - Rp ${formatPrice(maxPrice)}`;
+    } else if (minPrice) {
+        return `Mulai dari Rp ${formatPrice(minPrice)}`;
+    }
+    return 'Harga belum tersedia';
+}
+
+function formatPrice(price) {
+    return new Intl.NumberFormat('id-ID').format(price);
+}
+
+function getServiceDisplay(service) {
+    const displays = {
+        // Perawatan Wajah Dasar
+        'facial_basic': 'Facial Basic',
+        'facial_acne': 'Facial Acne',
+        'facial_brightening': 'Facial Brightening',
+        'blackhead_removal': 'Blackhead Removal',
+        'hydrafacial': 'HydraFacial',
+
+        // Peeling Treatment
+        'chemical_peel': 'Chemical Peeling',
+        'carbon_peel': 'Carbon Peel',
+        'milk_peel': 'Milk Peel',
+
+        // Laser Treatment
+        'laser_rejuvenation': 'Laser Rejuvenation',
+        'laser_acne': 'Laser Acne',
+        'ipl_photorejuvenation': 'IPL Photorejuvenation',
+        'laser_hair_removal': 'Laser Hair Removal',
+        'co2_laser': 'CO2 Laser',
+
+        // Injeksi & Estetik
+        'botox': 'Botox',
+        'filler': 'Dermal Filler',
+        'skinbooster': 'Skin Booster',
+        'vitamin_injection': 'Vitamin Injection',
+        'whitening_injection': 'Whitening Injection',
+
+        // Advanced Treatment
+        'microneedling': 'Microneedling',
+        'rf_microneedling': 'RF Microneedling',
+        'hifu': 'HIFU',
+
+        // Specialized Treatment
+        'prp_therapy': 'PRP Therapy',
+        'thread_lift': 'Thread Lift',
+        'cryotherapy': 'Cryotherapy',
+        'sclerotherapy': 'Sclerotherapy',
+
+        // Body Treatment
+        'body_contouring': 'Body Contouring',
+        'cavitation': 'Cavitation',
+        'radiofrequency': 'Radiofrequency',
+        'coolsculpting': 'CoolSculpting'
+    };
+
+    return displays[service] || service.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+</script>
+@endpush

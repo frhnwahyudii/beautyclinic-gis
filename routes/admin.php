@@ -9,19 +9,21 @@ use App\Http\Controllers\Admin\AdminKlinikController;
 |--------------------------------------------------------------------------
 */
 
-// Dashboard
-Route::get('/', function () {
-    return view('admin.dashboard');
-})->name('admin.dashboard');
+// All admin routes require authentication and admin role
+Route::middleware(['auth', 'is_admin'])->group(function () {
 
-// Statistics
-Route::get('/statistics', [App\Http\Controllers\Admin\StatisticsController::class, 'index'])->name('admin.statistics');
+    // Dashboard
+    Route::get('/', function () {
+        return view('admin.dashboard');
+    })->name('admin.dashboard');
 
-// Klinik Management
-Route::prefix('kliniks')->group(function () {
-    Route::get('/', [AdminKlinikController::class, 'index'])->name('admin.kliniks.index');
-    Route::get('/{klinik}/edit', [AdminKlinikController::class, 'edit'])->name('admin.kliniks.edit');
-    Route::put('/{klinik}', [AdminKlinikController::class, 'update'])->name('admin.kliniks.update');
-    Route::delete('/{klinik}', [AdminKlinikController::class, 'destroy'])->name('admin.kliniks.destroy');
-    Route::patch('/{klinik}/status', [AdminKlinikController::class, 'updateStatus'])->name('admin.kliniks.update-status');
+    // Klinik Management
+    Route::prefix('kliniks')->group(function () {
+        Route::get('/', [AdminKlinikController::class, 'index'])->name('admin.kliniks.index');
+        Route::get('/{klinik}/edit', [AdminKlinikController::class, 'edit'])->name('admin.kliniks.edit');
+        Route::put('/{klinik}', [AdminKlinikController::class, 'update'])->name('admin.kliniks.update');
+        Route::delete('/{klinik}', [AdminKlinikController::class, 'destroy'])->name('admin.kliniks.destroy');
+        Route::patch('/{klinik}/status', [AdminKlinikController::class, 'updateStatus'])->name('admin.kliniks.update-status');
+    });
+
 });

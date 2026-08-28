@@ -20,10 +20,18 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        // Normalisasi email agar tidak sensitif huruf besar/kecil
+        $email = strtolower(trim($credentials['email']));
+
+        // Pencarian case-insensitive (parameterized — aman dari SQL injection,
+        // Laravel mengikat $email sebagai parameter query)
+        $user = \App\Models\User::whereRaw('LOWER(email) = ?', [$email])->first();
+
+        if ($user && \Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+            \Illuminate\Support\Facades\Auth::login($user, $request->boolean('remember'));
             $request->session()->regenerate();
 
-            if (Auth::user()->is_admin) {
+            if ($user->is_admin) {
                 return redirect()->intended('/admin')->with('success', 'Login berhasil sebagai admin!');
             }
 

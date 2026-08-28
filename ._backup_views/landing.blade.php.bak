@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>SIG Klinik Kecantikan Jambi</title>
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+        <!-- AOS Animation -->
+        <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+        <style>
+            /* Hero Section Styles */
+            .hero-section {
+                min-height: 100vh;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .hero-background {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background-attachment: fixed;
+                z-index: -1;
+            }
+
+            /* Navbar Dropdown Fix */
+            .navbar {
+                position: relative;
+                z-index: 1030;
+            }
+
+            .navbar .dropdown-menu {
+                z-index: 9999 !important;
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+                border: 1px solid rgba(0, 0, 0, 0.05);
+            }
+
+            .hero-background::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+                z-index: 1;
+            }
+
+            .text-gradient {
+                background: linear-gradient(45deg, #ffd700, #ffed4a);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            /* Button Styles */
+            .btn-hero-primary {
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                border: none;
+                color: white;
+                padding: 15px 30px;
+                font-weight: 600;
+                border-radius: 50px;
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+
+            .btn-hero-primary:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+
+            .btn-hero-secondary {
+                background: transparent;
+                border: 2px solid white;
+                color: white;
+                padding: 13px 30px;
+                font-weight: 600;
+                border-radius: 50px;
+                transition: all 0.3s ease;
+                text-decoration: none;
+            }
+
+            .btn-hero-secondary:hover {
+                background: white;
+                color: #667eea;
+                transform: translateY(-3px);
+            }
+
+            /* Feature Cards */
+            .feature-card {
+                background: white;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+                border: 1px solid #f0f0f0;
+                height: 100%;
+            }
+
+            .feature-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 60px rgba(102, 126, 234, 0.2);
+            }
+
+            .feature-icon {
+                width: 80px;
+                height: 80px;
+                background: linear-gradient(45deg, #667eea, #764ba2);
+                border-radius: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+            }
+
+            .feature-icon i {
+                font-size: 2rem;
+                color: white;
+            }
+
+            /* Navigation */
+            .navbar {
+                background: rgba(255,255,255,0.95) !important;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
+            }
+
+            .navbar-brand {
+                color: #667eea !important;
+                font-weight: 700;
+            }
+
+            .navbar-nav .nav-link {
+                color: #333 !important;
+                font-weight: 500;
+                transition: color 0.3s ease;
+                margin: 0 10px;
+            }
+
+            .navbar-nav .nav-link:hover {
+                color: #667eea !important;
+            }
+
+            /* CTA Section */
+            .cta-section {
+                background: linear-gradient(45deg, #f8f9fa, #e9ecef);
+                border-top: 1px solid #dee2e6;
+            }
+
+            .hero-title {
+                animation: float 6s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-20px); }
+            }
+        </style>
+    </head>
+    <body class="font-sans antialiased">
+
+        <!-- Header Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-transparent position-fixed w-100" style="z-index: 1000;">
+            <div class="container">
+                <a class="navbar-brand fw-bold fs-3" href="#">
+                    <i class="bi bi-geo-alt text-primary me-2"></i>SIG Klinik Kecantikan
+                </a>
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('klinik.map') }}">
+                                <i class="bi bi-map"></i> Peta Klinik
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('klinik.create') }}">
+                                <i class="bi bi-plus-circle"></i> Daftar Klinik
+                            </a>
+                        </li>
+                    </ul>
+
+                    @if (Route::has('login'))
+                        <div class="navbar-nav ms-auto">
+                            @auth
+                                @if(Auth::user()->is_admin)
+                                    <a href="{{ url('/admin') }}" class="btn btn-outline-primary me-2">
+                                        <i class="bi bi-speedometer2"></i> Dashboard
+                                    </a>
+                                @endif
+                                <div class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" style="z-index: 9999;">
+                                        <li>
+                                            <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="dropdown-item text-danger">
+                                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            @else
+                                <div class="d-flex align-items-center">
+                                    <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">
+                                        <i class="bi bi-box-arrow-in-right"></i> Login
+                                    </a>
+                                    @if (Route::has('register'))
+                                        <a href="{{ route('register') }}" class="btn btn-primary">
+                                            <i class="bi bi-person-plus"></i> Register
+                                        </a>
+                                    @endif
+                                </div>
+                            @endauth
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero-section position-relative overflow-hidden">
+            <div class="hero-background position-absolute w-100 h-100"></div>
+            <div class="container py-5">
+                <div class="row min-vh-100 align-items-center">
+                    <div class="col-lg-8 mx-auto text-center text-white" data-aos="fade-up">
+                        <div class="hero-content">
+                            <h1 class="display-3 fw-bold mb-4 hero-title">
+                                <span class="text-gradient">SIG Klinik Kecantikan</span>
+                                <br>Kota Jambi
+                            </h1>
+                            <p class="lead mb-5 hero-subtitle">
+                                Temukan klinik kecantikan terbaik di Jambi dengan sistem informasi geografis
+                                yang komprehensif dan terpercaya
+                            </p>
+                            <div class="hero-buttons d-flex flex-column flex-md-row gap-3 justify-content-center">
+                                <a href="{{ route('klinik.map') }}" class="btn btn-hero-primary btn-lg">
+                                    <i class="bi bi-geo-alt"></i> Jelajahi Peta
+                                </a>
+                                <a href="{{ route('klinik.create') }}" class="btn btn-hero-secondary">
+                                    <i class="bi bi-plus-circle"></i> Daftarkan Klinik
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-5 bg-light">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-lg-8 mx-auto text-center" data-aos="fade-up">
+                        <h2 class="display-5 fw-bold mb-3">Fitur Unggulan</h2>
+                        <p class="lead text-muted">Platform terlengkap untuk informasi klinik kecantikan di Jambi</p>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="100">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-4">
+                                <i class="bi bi-geo-alt"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Peta Interaktif</h4>
+                            <p class="text-muted">Jelajahi lokasi klinik kecantikan dengan peta interaktif yang mudah digunakan dan akurat</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-4">
+                                <i class="bi bi-star"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Informasi Lengkap</h4>
+                            <p class="text-muted">Dapatkan informasi detail tentang profil, layanan, dan kontak setiap klinik</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-4">
+                                <i class="bi bi-search"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Filter & Pencarian</h4>
+                            <p class="text-muted">Cari klinik berdasarkan harga, layanan, dan lokasi sesuai kebutuhan Anda</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                        <div class="feature-card text-center p-4 h-100">
+                            <div class="feature-icon mb-4">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <h4 class="fw-bold mb-3">Responsive Design</h4>
+                            <p class="text-muted">Akses mudah dari laptop hingga smartphone dengan desain yang responsif</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Call to Action Section -->
+        <section class="py-5 cta-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-8" data-aos="fade-right">
+                        <h2 class="display-5 fw-bold mb-3">Siap Memulai?</h2>
+                        <p class="lead mb-4">Bergabunglah dengan platform SIG Klinik Kecantikan dan temukan klinik terbaik di Jambi</p>
+                    </div>
+                    <div class="col-lg-4 text-lg-end" data-aos="fade-left">
+                        <a href="{{ route('klinik.map') }}" class="btn btn-primary btn-lg me-3 mb-2">
+                            Mulai Sekarang
+                        </a>
+                        <a href="{{ route('klinik.create') }}" class="btn btn-outline-primary btn-lg mb-2">
+                            Daftar Klinik
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-dark text-white py-4">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <p class="mb-0">&copy; 2025 SIG Klinik Kecantikan Jambi. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <div class="social-links">
+                            <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+                            <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+                            <a href="#" class="text-white"><i class="bi bi-whatsapp"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Scripts -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+        <script>
+            // Initialize AOS
+            AOS.init({
+                duration: 1000,
+                easing: 'ease-in-out',
+                once: true
+            });
+
+            // Simple initialization - stats are already rendered server-side
+            console.log('Landing page loaded with static statistics');
+        </script>
+    </body>
+</html>

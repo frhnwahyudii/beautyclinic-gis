@@ -10,10 +10,44 @@ use Illuminate\Support\Str;
 
 class AdminKlinikController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $kliniks = Klinik::latest()->paginate(10);
-        return view('admin.kliniks.index', compact('kliniks'));
+        try {
+            $query = Klinik::query();
+
+            // Search functionality
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function($q) use ($search) {
+                    $q->where('nama', 'like', "%{$search}%")
+                      ->orWhere('alamat', 'like', "%{$search}%")
+                      ->orWhere('telepon', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            }
+
+            // Status filter
+            if ($request->filled('status')) {
+                $query->where('status', $request->status);
+            }
+
+            $kliniks = $query->latest()->paginate(10);
+
+            // Preserve query parameters in pagination
+            $kliniks->appends($request->query());
+
+            // Debug: Add some logging or session flash for debugging
+            if (config('app.debug')) {
+                session()->flash('debug', 'Loaded ' . $kliniks->total() . ' clinics');
+            }
+
+            return view('admin.kliniks.index', compact('kliniks'));
+        } catch (\Exception $e) {
+            // Log error and redirect with error message
+            \Log::error('Admin Klinik Index Error: ' . $e->getMessage());
+
+            return back()->with('error', 'Terjadi kesalahan saat memuat data klinik: ' . $e->getMessage());
+        }
     }
 
     public function edit(Klinik $klinik)
@@ -37,6 +71,13 @@ class AdminKlinikController extends Controller
             'twitter' => 'nullable|string|max:255',
             'website' => 'nullable|url|max:255',
             'status' => 'required|in:pending,approved,rejected',
+            'deskripsi' => 'nullable|string|max:1000',
+            'min_price' => 'required|integer|min:0',
+            'max_price' => 'nullable|integer|min:0|gte:min_price',
+            'services' => 'required|array|min:1',
+            'services.*' => 'in:facial_basic,facial_acne,facial_brightening,blackhead_removal,hydrafacial,chemical_peel,carbon_peel,milk_peel,laser_rejuvenation,laser_acne,ipl_photorejuvenation,laser_hair_removal,co2_laser,botox,filler,skinbooster,vitamin_injection,whitening_injection,microneedling,rf_microneedling,hifu,prp_therapy,thread_lift,cryotherapy,sclerotherapy,body_contouring,cavitation,radiofrequency,coolsculpting',
+            'prices' => 'required|array',
+            'prices.*' => 'nullable|integer|min:0'
         ]);
 
         if ($request->hasFile('foto')) {
@@ -48,6 +89,9 @@ class AdminKlinikController extends Controller
             $foto->storeAs('klinik_photos', $fotoName, 'public');
             $validatedData['foto'] = $fotoName;
         }
+
+        // Menyimpan prices ke service_prices
+        $validatedData['service_prices'] = $request->prices;
 
         $klinik->update($validatedData);
 

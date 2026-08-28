@@ -1,124 +1,106 @@
 @extends('layouts.admin')
 
+@section('title', 'Dashboard — SIG Klinik Kecantikan')
+@section('page-title', 'Dashboard')
+@section('page-sub', 'Ringkasan data klinik kecantikan')
+
 @section('content')
-<div class="container-fluid">
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4 mb-4">
-            <div class="card bg-primary text-white h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Total Klinik</h6>
-                            <h2 class="mt-2 mb-0">{{ \App\Models\Klinik::count() }}</h2>
-                        </div>
-                        <div>
-                            <i class="fas fa-clinic-medical fa-3x opacity-50"></i>
-                        </div>
-                    </div>
+<!-- Stat cards -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4" data-reveal>
+        <div class="card stat-card stat-sage h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 fw-semibold" style="font-size: .85rem;">Total Klinik</div>
+                    <div class="stat-value mt-1">{{ \App\Models\Klinik::count() }}</div>
+                    <small class="text-white-50">Semua data klinik</small>
                 </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{{ route('admin.kliniks.index') }}">Lihat Detail</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                </div>
+                <div class="stat-icon-medallion"><i class="fas fa-clinic-medical"></i></div>
             </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card bg-warning text-white h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Pending</h6>
-                            <h2 class="mt-2 mb-0">{{ \App\Models\Klinik::where('status', 'pending')->count() }}</h2>
-                        </div>
-                        <div>
-                            <i class="fas fa-clock fa-3x opacity-50"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{{ route('admin.kliniks.index') }}">Lihat Detail</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-            <div class="card bg-success text-white h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h6 class="card-title mb-0">Aktif</h6>
-                            <h2 class="mt-2 mb-0">{{ \App\Models\Klinik::where('status', 'approved')->count() }}</h2>
-                        </div>
-                        <div>
-                            <i class="fas fa-check-circle fa-3x opacity-50"></i>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-footer d-flex align-items-center justify-content-between">
-                    <a class="small text-white stretched-link" href="{{ route('admin.kliniks.index') }}">Lihat Detail</a>
-                    <div class="small text-white"><i class="fas fa-angle-right"></i></div>
-                </div>
-            </div>
+            <a href="{{ route('admin.kliniks.index') }}" class="stretched-link text-decoration-none" style="color: inherit;"></a>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-table me-1"></i>
-                    Klinik Terbaru
+    <div class="col-md-4" data-reveal style="--reveal-delay: 0.08s;">
+        <div class="card stat-card stat-terra h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 fw-semibold" style="font-size: .85rem;">Menunggu Verifikasi</div>
+                    <div class="stat-value mt-1">{{ \App\Models\Klinik::where('status', 'pending')->count() }}</div>
+                    <small class="text-white-50">Perlu tindakan Anda</small>
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Nama</th>
-                                    <th>Status</th>
-                                    <th>Tanggal</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach(\App\Models\Klinik::latest()->take(5)->get() as $klinik)
-                                <tr>
-                                    <td>{{ $klinik->nama }}</td>
-                                    <td>
-                                        <span class="badge bg-{{ $klinik->status == 'approved' ? 'success' : ($klinik->status == 'pending' ? 'warning' : 'danger') }}">
-                                            {{ ucfirst($klinik->status) }}
-                                        </span>
-                                    </td>
-                                    <td>{{ $klinik->created_at->format('d M Y') }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                <div class="stat-icon-medallion"><i class="fas fa-clock"></i></div>
+            </div>
+            <a href="{{ route('admin.kliniks.index', ['status' => 'pending']) }}" class="stretched-link text-decoration-none" style="color: inherit;"></a>
+        </div>
+    </div>
+
+    <div class="col-md-4" data-reveal style="--reveal-delay: 0.16s;">
+        <div class="card stat-card stat-deep h-100">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="text-white-50 fw-semibold" style="font-size: .85rem;">Aktif / Terverifikasi</div>
+                    <div class="stat-value mt-1">{{ \App\Models\Klinik::where('status', 'approved')->count() }}</div>
+                    <small class="text-white-50">Tampil di peta publik</small>
+                </div>
+                <div class="stat-icon-medallion"><i class="fas fa-check-circle"></i></div>
+            </div>
+            <a href="{{ route('admin.kliniks.index', ['status' => 'approved']) }}" class="stretched-link text-decoration-none" style="color: inherit;"></a>
+        </div>
+    </div>
+</div>
+<div class="row g-4">
+    <!-- Status chart -->
+    <div class="col-lg-6" data-reveal>
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h5 class="mb-1" style="font-family: var(--font-display); color: var(--sage-900);">Status Klinik</h5>
+                        <small class="text-muted">Distribusi status seluruh klinik</small>
+                    </div>
+                    <div class="medallion medallion-gold" style="width:46px;height:46px;font-size:1.1rem;border-radius:15px;">
+                        <i class="fas fa-chart-pie"></i>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <i class="fas fa-chart-pie me-1"></i>
-                    Status Klinik
-                </div>
-                <div class="card-body">
+                <div style="height: 280px;">
                     <canvas id="statusChart" width="100%" height="50"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="col-lg-6" data-reveal style="--reveal-delay: 0.1s;">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <div>
+                        <h5 class="mb-1" style="font-family: var(--font-display); color: var(--sage-900);">Aktivitas Terbaru</h5>
+                        <small class="text-muted">Klinik yang baru terdaftar</small>
+                    </div>
+                    <div class="medallion medallion-terra" style="width:46px;height:46px;font-size:1.1rem;border-radius:15px;">
+                        <i class="fas fa-history"></i>
+                    </div>
+                </div>
+                <div class="timeline">
+                    @foreach(\App\Models\Klinik::latest()->take(8)->get() as $activity)
+                    <div class="timeline-item">
+                        <div class="timeline-date">{{ $activity->created_at->diffForHumans() }}</div>
+                        <div class="timeline-content">
+                            <strong>{{ $activity->nama }}</strong> telah mendaftar
+                            <span class="badge ms-1 {{ $activity->status == 'approved' ? 'bg-success-soft' : ($activity->status == 'pending' ? 'bg-warning-soft' : 'bg-danger-soft') }}">
+                                {{ ucfirst($activity->status) }}
+                            </span>
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
             </div>
         </div>
     </div>
 </div>
 @endsection
-
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -134,15 +116,31 @@ document.addEventListener('DOMContentLoaded', function() {
             labels: ['Disetujui', 'Pending', 'Ditolak'],
             datasets: [{
                 data: [approved, pending, rejected],
-                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                backgroundColor: ['#5B8A5B', '#C98A3D', '#C0534B'],
+                borderWidth: 0,
+                hoverOffset: 8
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            cutout: '68%',
             plugins: {
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        font: { family: 'Manrope', size: 13, weight: 600 }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: '#2E3A29',
+                    padding: 12,
+                    cornerRadius: 12,
+                    titleFont: { family: 'Manrope' },
+                    bodyFont: { family: 'Manrope' }
                 }
             }
         }
@@ -150,3 +148,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+
+
