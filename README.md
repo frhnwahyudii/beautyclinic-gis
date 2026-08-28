@@ -1,66 +1,233 @@
-<<<<<<< HEAD
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<div align="center">
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🌿 SIG Klinik Kecantikan Kota Jambi
 
-## About Laravel
+**Sistem Informasi Geografis (GIS) Klinik Kecantikan di Kota Jambi**
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Sebuah platform web untuk memetakan, mencari, dan mengelola klinik kecantikan di Kota Jambi secara interaktif — dibangun dengan **Laravel 12** dan didesain dengan identitas visual **"Botanical Calm"**.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+![Laravel](https://img.shields.io/badge/Laravel-12-red?logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8-4479A1?logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?logo=bootstrap&logoColor=white)
+![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?logo=leaflet&logoColor=white)
+![License](https://img.shields.io/badge/Lisensi-MIT-green)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+</div>
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📌 Tentang Proyek
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+SIG Klinik Kecantikan adalah **Sistem Informasi Geografis** berbasis web yang dikembangkan sebagai proyek penelitian (pra-skripsi) untuk memetakan sebaran **klinik kecantikan di Kota Jambi**. Sistem ini dirancang untuk:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- 🗺️ Menyajikan **visualisasi data spasial** klinik kecantikan pada peta interaktif
+- 🔍 Meningkatkan **aksesibilitas informasi** lokasi, layanan, dan harga bagi masyarakat
+- ⚙️ Mendukung **pengambilan keputusan** melalui data klinik yang terverifikasi
+- 🧑‍💼 Memberikan **sarana pengelolaan data** yang efisien bagi administrator
 
-## Laravel Sponsors
+Sistem menampilkan **36 klinik kecantikan** yang tersebar di Kota Jambi, lengkap dengan detail layanan, harga perawatan, jam operasional, kontak, hingga tautan media sosial.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## 📸 Galeri
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 🏠 Sisi Publik
 
-## Contributing
+| Landing Page | Peta Interaktif |
+|---|---|
+| ![Landing Page](docs/screenshots/landing.png) | ![Peta Interaktif](docs/screenshots/peta.png) |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Detail Klinik | Login |
+|---|---|
+| ![Detail Klinik](docs/screenshots/detail.png) | ![Login](docs/screenshots/login.png) |
 
-## Code of Conduct
+| Form Pendaftaran |
+|---|
+| ![Form Pendaftaran Klinik](docs/screenshots/form-pendaftaran.png) |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 🧑‍💼 Sisi Admin
 
-## Security Vulnerabilities
+| Dashboard | Manajemen Klinik |
+|---|---|
+| ![Admin Dashboard](docs/screenshots/admin-dashboard.png) | ![Manajemen Klinik](docs/screenshots/admin-klinik.png) |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| Edit Klinik |
+|---|
+| ![Edit Klinik](docs/screenshots/admin-edit.png) |
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-=======
-# beautyclinic-gis
-Currently developing a web-based Geographic Information System (GIS) as part of a research project (pre-thesis), focused on mapping beauty clinic locations across Jambi City. The system is designed to support spatial data visualization, improve clinic accessibility insights, and enhance decision-making through interactive map interfaces.
->>>>>>> 1e135681fde499b4d6a816a60fe0c6b09959cefa
+## ✨ Fitur Utama
+
+### 🗺️ Sisi Publik (Pengunjung)
+
+| Fitur | Deskripsi |
+|---|---|
+| **Landing Page** | Hero interaktif, marquee layanan, fitur unggulan, dan alur penggunaan |
+| **Peta Interaktif** | Peta Leaflet dengan **marker botani custom** berkode warna kategori harga, popup lengkap, dan **legend kategori** (Hemat / Menengah / Premium) |
+| **Filter Cerdas** | Pencarian nama/alamat, **chip rentang harga**, dan filter jenis layanan secara real-time |
+| **Detail Klinik** | Profil lengkap — cover foto, badge verifikasi, **daftar layanan & harga per kategori**, kontak, media sosial, dan peta lokasi |
+| **Form Pendaftaran Klinik** | 4 bagian terstruktur, **30+ layanan** dalam tile pilihan, picker lokasi peta draggable, dan bilah submit lengket (sticky) |
+| **Autentikasi** | Login & register dengan **pencocokan email case-insensitive** |
+
+### 🧑‍💼 Sisi Admin
+
+| Fitur | Deskripsi |
+|---|---|
+| **Dashboard** | Kartu statistik gradien (total / pending / aktif), **chart donut status**, dan timeline aktivitas terbaru |
+| **Manajemen Klinik** | Tabel data lengkap — pencarian, filter status, **pill status warna**, avatar, aksi verifikasi (Setujui / Tolak), edit, hapus |
+| **Edit Klinik** | Form terstruktur + **peta interaktif draggable** untuk menggeser lokasi klinik |
+| **Keamanan Peran** | Middleware **IsAdmin** — non-admin otomatis ditolak (403) |
+
+### 🛡️ Keamanan & Anti-Penyalahgunaan
+
+| Proteksi | Mekanisme |
+|---|---|
+| **Anti SQL Injection** | Query Eloquent *parameterized* + validasi ketat |
+| **Rate Limiting** | Login **5/menit**, registrasi **3/jam**, submit klinik **2/jam** per IP |
+| **Anti-Bot** | Honeypot field + *time-trap* (submit <3–5 detik ditolak) |
+| **Validasi Input** | Regex nama, normalisasi email, **batas dimensi gambar** (4000×4000) |
+| **Auto-Cleanup** | `klinik:cleanup` harian — hapus data ditolak/kedaluwarsa & file yatim |
+
+---
+
+## 🎨 Identitas Visual — "Botanical Calm"
+
+Desain UI/UX dibangun dari nol sebagai sistem desain khusus:
+
+- **Palet warna** — sage green `#54684A`, warm cream `#FAF6ED`, terracotta `#C97B5A`, emas `#C9A96A`
+- **Tipografi** — *Fraunces* (display serif) + *Manrope* (sans geometris)
+- **Elemen khas** — kartu lengkung (arch), blob organik, tekstur grain, aksen daun SVG
+- **Motion** — reveal-on-scroll bertahap, marquee, micro-interaksi hover
+- **Responsif penuh** — diuji pada 320px, 390px, dan 768px tanpa overflow horizontal
+
+---
+
+## 🧰 Teknologi
+
+| Lapisan | Teknologi |
+|---|---|
+| **Backend** | Laravel 12, PHP 8.2, Blade templating |
+| **Database** | MySQL 8 (`dbsigklinik`) |
+| **Frontend** | Bootstrap 5, Font Awesome 6, Bootstrap Icons |
+| **Peta** | Leaflet 1.9.4 (OpenStreetMap) |
+| **Visualisasi** | Chart.js (donut chart dashboard) |
+| **Interaksi** | jQuery, SweetAlert2 |
+| **Fonts** | Google Fonts (Fraunces & Manrope) |
+
+---
+
+## 🚀 Instalasi & Menjalankan
+
+```bash
+# 1. Clone repositori
+git clone <url-repo> sigklinikkecantikan
+cd sigklinikkecantikan
+
+# 2. Instal dependensi PHP
+composer install
+
+# 3. Salin konfigurasi lingkungan
+cp .env.example .env
+# lalu sesuaikan kredensial database di .env:
+#   DB_CONNECTION=mysql
+#   DB_HOST=127.0.0.1
+#   DB_DATABASE=dbsigklinik
+#   DB_USERNAME=root
+#   DB_PASSWORD=
+
+# 4. Generate application key
+php artisan key:generate
+
+# 5. Siapkan database (pilih salah satu)
+#   Opsi A — import dump yang tersedia:
+#     mysql -u root dbsigklinik < dbsigklinik.sql
+#   Opsi B — migrasi + seeder:
+#     php artisan migrate --seed        # AdminSeeder
+#     php artisan db:seed --class=KlinikSampleSeeder   # 36 klinik contoh
+
+# 6. Tautkan storage untuk foto klinik
+php artisan storage:link
+
+# 7. Jalankan server
+php artisan serve
+```
+
+Buka **http://127.0.0.1:8000** di browser.
+
+> ⚠️ **Pastikan direktori `storage` memiliki izin tulis** agar upload foto & session berjalan normal.
+
+---
+
+## 👤 Akun Default
+
+| Peran | Email | Password |
+|---|---|---|
+| **Administrator** | `admin@gmail.com` | `admin123` |
+
+> Login bersifat **case-insensitive** terhadap email (mis. `ADMIN@GMAIL.COM` juga diterima).
+
+---
+
+## 🧹 Perintah Tambahan
+
+```bash
+# Bersihkan data klinik sampah (ditolak / pending kedaluwarsa / file yatim)
+php artisan klinik:cleanup
+
+# Dengan pengaturan usia kustom
+php artisan klinik:cleanup --days-rejected=7 --days-pending=30
+
+# Lihat jadwal otomatis (berjalan tiap hari 02.00)
+php artisan schedule:list
+```
+
+---
+
+## 📁 Struktur Proyek
+
+```
+├── app/
+│   ├── Console/Commands/       # KlinikCleanup (anti-bloat storage/database)
+│   ├── Http/
+│   │   ├── Controllers/        # Klinik, Admin, Auth, Api
+│   │   └── Middleware/         # IsAdmin (proteksi peran admin)
+│   ├── Models/                 # Klinik, User
+│   └── Providers/              # Rate limiter (login/register/klinik)
+├── bootstrap/app.php           # Registrasi alias middleware
+├── config/                     # Konfigurasi aplikasi
+├── database/
+│   ├── migrations/
+│   └── seeders/                # AdminSeeder, KlinikSampleSeeder
+├── public/
+│   └── css/beauty.css          # Design system "Botanical Calm"
+├── resources/views/
+│   ├── landing.blade.php       # Halaman utama
+│   ├── public/                 # Map, detail, form pendaftaran
+│   ├── admin/                  # Dashboard, manajemen & edit klinik
+│   ├── auth/                   # Login & register
+│   └── layouts/                # Layout publik & admin
+└── routes/                     # web, admin, api, console
+```
+
+---
+
+## 🛣️ Roadmap
+
+- [x] Peta interaktif & filter klinik
+- [x] Pendaftaran klinik publik dengan alur verifikasi admin
+- [x] Panel admin (dashboard, manajemen, edit)
+- [x] Rate limiting & anti-bot
+- [ ] Pencarian rute / jarak terdekat dari lokasi pengguna
+- [ ] Email verifikasi & notifikasi
+- [ ] Statistik lanjutan (analisis sebaran & demografi)
+
+---
+
+## 📄 Lisensi
+
+Proyek ini dirilis di bawah lisensi **MIT**. Dikembangkan sebagai bagian dari penelitian **Sistem Informasi Geografis** untuk klinik kecantikan di Kota Jambi.
+
+
+
