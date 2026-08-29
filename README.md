@@ -144,8 +144,7 @@ php artisan key:generate
 #   Opsi A — import dump yang tersedia:
 #     mysql -u root dbsigklinik < dbsigklinik.sql
 #   Opsi B — migrasi + seeder:
-#     php artisan migrate --seed        # AdminSeeder
-#     php artisan db:seed --class=KlinikSampleSeeder   # 36 klinik contoh
+#     php artisan migrate --seed        # AdminSeeder + KlinikSeeder (36 klinik)
 
 # 6. Tautkan storage untuk foto klinik
 php artisan storage:link

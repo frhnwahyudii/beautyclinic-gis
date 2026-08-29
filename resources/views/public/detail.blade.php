@@ -493,6 +493,18 @@
 </div>
 @endsection
 @push('scripts')
+@php
+    // Kategori harga untuk warna marker (konsisten dengan peta):
+    // Hemat <= 1jt, Menengah 1jt-2.5jt, Premium > 2.5jt
+    $detailEffectiveMax = $klinik->max_price ?: ($klinik->min_price ?: 0);
+    if ($detailEffectiveMax > 0 && $detailEffectiveMax <= 1000000) {
+        $markerCategory = 'murah';
+    } elseif ($detailEffectiveMax > 2500000) {
+        $markerCategory = 'mahal';
+    } else {
+        $markerCategory = 'menengah';
+    }
+@endphp
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var map = L.map('map').setView([{{ $klinik->latitude }}, {{ $klinik->longitude }}], 15);
@@ -502,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }).addTo(map);
 
     var icon = L.divIcon({
-        className: 'botan-marker marker-menengah',
+        className: 'botan-marker marker-{{ $markerCategory }}',
         html: '<div class="marker-pin"><i class="bi bi-flower2"></i></div>',
         iconSize: [38, 44],
         iconAnchor: [19, 40],

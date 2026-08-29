@@ -117,12 +117,7 @@
 
     .map-tiles { filter: saturate(0.9) contrast(1.02); }
 
-    /* Category marker colors */
-    .marker-murah .marker-pin { background: linear-gradient(135deg, var(--terracotta), var(--terracotta-strong)); }
-    .marker-murah .marker-pin::after { background: #fff; }
-    .marker-mahal .marker-pin { background: linear-gradient(135deg, var(--sage-950), var(--sage-800)); }
-    .marker-mahal .marker-pin::after { background: var(--gold); }
-    .marker-menengah .marker-pin { background: linear-gradient(135deg, var(--sage-700), var(--sage-500)); }
+    /* Warna marker per kategori diambil dari design system (beauty.css) */
 
     /* Popup */
     .leaflet-popup-content { margin: 14px 18px; }
@@ -143,6 +138,17 @@
         padding: 0.35rem 0.9rem;
         font-size: 0.85rem;
         font-weight: 700;
+    }
+
+    .category-chip {
+        display: inline-block;
+        color: #fff;
+        border-radius: var(--radius-pill);
+        padding: 0.35rem 0.9rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
     }
 
     .service-tag {
@@ -352,7 +358,7 @@
                         Menengah
                     </span>
                     <span class="d-inline-flex align-items-center gap-1" style="font-size:.8rem; color: var(--ink-soft);">
-                        <span style="width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--sage-950),var(--sage-800));display:inline-block;"></span>
+                        <span style="width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#A9823F);display:inline-block;"></span>
                         Premium
                     </span>
                 </div>
@@ -417,15 +423,27 @@ function loadMarkers(kliniks) {
     clearMarkers();
 
     kliniks.forEach(function(klinik) {
-        // Determine price category based on min_price
+        // Kategorikan berdasarkan harga tertinggi yang tersedia (max_price, fallback min_price)
+        //   Hemat    : <= 1.000.000
+        //   Menengah : 1.000.001 - 2.500.000
+        //   Premium  : > 2.500.000
         let priceCategory = 'menengah'; // default
-        if (klinik.min_price && klinik.min_price <= 500000) {
+        const effectiveMax = klinik.max_price || klinik.min_price || 0;
+        if (effectiveMax > 0 && effectiveMax <= 1000000) {
             priceCategory = 'murah';
-        } else if (klinik.min_price && klinik.min_price >= 2500000) {
+        } else if (effectiveMax > 2500000) {
             priceCategory = 'mahal';
         }
 
         const markerClass = `marker-${priceCategory}`;
+
+        // Meta untuk label kategori (ditampilkan di popup)
+        const categoryMeta = {
+            murah:    { label: 'Hemat',    color: 'var(--terracotta)' },
+            menengah: { label: 'Menengah', color: 'var(--sage-700)' },
+            mahal:    { label: 'Premium',  color: '#A9823F' }
+        };
+        const catMeta = categoryMeta[priceCategory];
 
         var klinikIcon = L.divIcon({
             className: `botan-marker ${markerClass}`,
@@ -450,7 +468,8 @@ function loadMarkers(kliniks) {
                 <p class="small text-muted mb-2"><i class="bi bi-geo-alt"></i> ${klinik.alamat}</p>
                 ${klinik.deskripsi ? `<p class="small text-muted mb-2">${klinik.deskripsi}</p>` : ''}
                 <p class="small mb-2"><i class="bi bi-clock"></i> ${klinik.jam_operasional}</p>
-                <div class="mb-2">
+                <div class="mb-2 d-flex justify-content-center align-items-center gap-2 flex-wrap">
+                    <span class="category-chip" style="background:${catMeta.color};">${catMeta.label}</span>
                     <span class="price-badge">${priceDisplay}</span>
                 </div>
                 <div class="mb-3">

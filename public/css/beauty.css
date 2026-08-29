@@ -726,6 +726,30 @@ a:hover { color: var(--terracotta); }
   margin: auto;
 }
 
+/* ── Kategori harga: Hemat / Menengah / Premium ── */
+.marker-murah .marker-pin {
+  background: linear-gradient(135deg, var(--terracotta), var(--terracotta-strong));
+}
+.marker-murah .marker-pin::after {
+  background: #fff;
+}
+
+.marker-menengah .marker-pin {
+  background: linear-gradient(135deg, var(--sage-700), var(--sage-500));
+}
+.marker-menengah .marker-pin::after {
+  background: #fff;
+}
+
+.marker-mahal .marker-pin {
+  background: linear-gradient(135deg, var(--gold), #A9823F);
+  box-shadow: 0 6px 16px rgba(169, 130, 63, 0.45);
+}
+.marker-mahal .marker-pin::after {
+  background: var(--sage-900);
+  border-color: rgba(255, 255, 255, 0.9);
+}
+
 .botan-marker .marker-pin svg {
   transform: rotate(45deg);
   position: relative;

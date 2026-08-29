@@ -66,42 +66,6 @@
                         </a>
                     </li>
                 </ul>
-
-                @if (Route::has('login'))
-                    <div class="navbar-nav ms-auto align-items-lg-center">
-                        @auth
-                            @if(Auth::user()->is_admin)
-                                <a href="{{ url('/admin') }}" class="btn btn-outline-sage me-2 my-1">
-                                    <i class="bi bi-speedometer2"></i> Dashboard Admin
-                                </a>
-                            @endif
-                            <div class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end shadow-lift">
-                                    <li>
-                                        <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="dropdown-item text-danger">
-                                                <i class="bi bi-box-arrow-right me-2"></i> Logout
-                                            </button>
-                                        </form>
-                                    </li>
-                                </ul>
-                            </div>
-                        @else
-                            <a href="{{ route('login') }}" class="btn btn-outline-sage me-2 my-1">
-                                <i class="bi bi-box-arrow-in-right"></i> Masuk
-                            </a>
-                            @if (Route::has('register'))
-                                <a href="{{ route('register') }}" class="btn btn-sage my-1">
-                                    <i class="bi bi-person-plus"></i> Daftar
-                                </a>
-                            @endif
-                        @endauth
-                    </div>
-                @endif
             </div>
         </div>
     </nav>
