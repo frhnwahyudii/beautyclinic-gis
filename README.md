@@ -189,9 +189,24 @@ PUBLIC_DISK=public_s3
 - Upload file foto yang sudah ada ke bucket S3 di folder `klinik_photos/`
 - URL foto otomatis mengarah ke S3 (tanpa symlink, persisten)
 
----
+### 🔍 Foto tidak muncul? Jalankan diagnosa
+```bash
+php artisan storage:check
+```
+Perintah ini menampilkan: disk aktif, kelengkapan kredensial AWS (region/bucket/url/endpoint),
+URL foto yang dihasilkan, keberadaan objek di bucket, dan status akses HTTP (200/403/404).
 
-## 🧹 Perintah Tambahan
+Perbaikan paling umum (hasil 403/404):
+```bash
+# 1. Upload foto lama dari komputer lokal ke bucket
+aws s3 cp storage/app/public/klinik_photos/ s3://NAMA-BUCKET/klinik_photos/ --recursive --acl public-read
+
+# 2. Pastikan bucket bisa dibaca publik (bukan 403):
+#    - Matikan "Block all public access" di pengaturan bucket
+#    - Tambahkan bucket policy s3:GetObject pada prefix klinik_photos/*
+```
+
+### 🧹 Perintah Tambahan
 
 ```bash
 # Bersihkan data klinik sampah (ditolak / pending kedaluwarsa / file yatim)
