@@ -463,7 +463,7 @@ function loadMarkers(kliniks) {
 
         var popupContent = `
             <div class="text-center p-1">
-                ${klinik.foto ? `<img src="${klinik.foto_url}" class="img-fluid rounded-4 mb-2" style="max-height: 100px; width: 100%; object-fit: cover;">` : ''}
+                ${klinik.foto_url ? `<img src="${klinik.foto_url}" class="img-fluid rounded-4 mb-2" style="max-height: 100px; width: 100%; object-fit: cover;">` : ''}
                 <div class="popup-title mb-1">${klinik.nama}</div>
                 <p class="small text-muted mb-2"><i class="bi bi-geo-alt"></i> ${klinik.alamat}</p>
                 ${klinik.deskripsi ? `<p class="small text-muted mb-2">${klinik.deskripsi}</p>` : ''}

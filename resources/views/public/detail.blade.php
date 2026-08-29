@@ -245,7 +245,7 @@
 
     <!-- Cover -->
     <div class="detail-cover-wrap">
-        @if($klinik->foto)
+        @if($klinik->foto_url)
             <img src="{{ $klinik->foto_url }}" class="cover-img" alt="{{ $klinik->nama }}">
         @else
             <div class="detail-cover-fallback">
@@ -258,7 +258,7 @@
     <div class="detail-profile-card">
         <div class="detail-profile-inner">
             <div class="d-flex align-items-center gap-3">
-                @if($klinik->foto)
+                @if($klinik->foto_url)
                     <img src="{{ $klinik->foto_url }}" class="detail-avatar" alt="{{ $klinik->nama }}">
                 @else
                     <div class="detail-avatar-fallback"><i class="bi bi-buildings"></i></div>

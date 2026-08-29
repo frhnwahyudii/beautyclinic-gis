@@ -121,7 +121,7 @@
 
             <div class="col-md-6">
                 <label class="form-label">Foto Klinik</label>
-                @if($klinik->foto)
+                @if($klinik->foto_url)
                     <div class="img-preview">
                         <img src="{{ $klinik->foto_url }}" alt="{{ $klinik->nama }}" class="img-fluid w-100" style="max-height: 200px; object-fit: cover;">
                     </div>

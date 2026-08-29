@@ -105,7 +105,7 @@
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-3">
-                                @if($klinik->foto)
+                                @if($klinik->foto_url)
                                     <img src="{{ $klinik->foto_url }}" alt="Foto {{ $klinik->nama }}" class="avatar-thumb">
                                 @else
                                     <div class="avatar-fallback">

@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class Klinik extends Model
 {
@@ -61,12 +63,54 @@ class Klinik extends Model
 
     public function getFotoUrlAttribute()
     {
-        if ($this->foto) {
-            // Gunakan disk publik terkonfigurasi (public = lokal/symlink, public_s3 = S3).
-            // Storage::url() otomatis menghasilkan URL yang benar sesuai driver disk.
-            return Storage::disk(config('filesystems.public_disk'))
-                ->url('klinik_photos/' . $this->foto);
+        if (! $this->foto) {
+            return null;
         }
+
+        $path = 'klinik_photos/' . $this->foto;
+        $diskName = config('filesystems.public_disk', 'public');
+        $diskCfg = config('filesystems.disks.' . $diskName, []);
+
+        try {
+            // Untuk driver S3: bangun URL langsung dari konfigurasi tanpa membuat
+            // S3 client — menghindari ketergantungan pada kredensial/region hanya
+            // untuk sekadar menghasilkan URL. Urutan: AWS_URL > AWS_ENDPOINT > bucket.region.
+            if (($diskCfg['driver'] ?? null) === 's3') {
+                if ($base = $this->s3PublicBaseUrl($diskCfg)) {
+                    return rtrim($base, '/') . '/' . ltrim($path, '/');
+                }
+            }
+
+            return Storage::disk($diskName)->url($path);
+        } catch (Throwable $e) {
+            // Jangan pernah menggagalkan halaman hanya karena URL foto tidak dapat dibuat.
+            try {
+                Log::warning('Gagal membuat URL foto klinik #' . ($this->id ?? '?') . ' (disk=' . $diskName . '): ' . $e->getMessage());
+            } catch (Throwable $logError) {
+                // Abaikan: kegagalan logging tidak boleh memperparah error foto.
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Basis URL publik untuk disk S3, dihitung dari konfigurasi tanpa membuat S3 client.
+     * Urutan prioritas: url (AWS_URL) > endpoint (AWS_ENDPOINT) > bucket.region virtual-host style.
+     */
+    private function s3PublicBaseUrl(array $cfg): ?string
+    {
+        if (! empty($cfg['url'])) {
+            return $cfg['url'];
+        }
+
+        if (! empty($cfg['endpoint'])) {
+            return rtrim($cfg['endpoint'], '/');
+        }
+
+        if (! empty($cfg['bucket']) && ! empty($cfg['region'])) {
+            return 'https://' . $cfg['bucket'] . '.s3.' . $cfg['region'] . '.amazonaws.com';
+        }
+
         return null;
     }
 
