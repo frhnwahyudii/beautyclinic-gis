@@ -36,13 +36,13 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinutes(60, 3)->by($request->ip());
         });
 
-        // Submit klinik (upload foto): maks 2 per jam per IP;
+        // Submit klinik (upload foto): maks 2 per 30 menit per IP;
         // user yang sudah login (admin) tidak dibatasi
         RateLimiter::for('klinik-submit', function ($request) {
             if ($request->user()) {
                 return Limit::none();
             }
-            return Limit::perMinutes(60, 2)->by($request->ip());
+            return Limit::perMinutes(30, 2)->by($request->ip());
         });
     }
 }

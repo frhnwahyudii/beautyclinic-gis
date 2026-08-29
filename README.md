@@ -214,7 +214,22 @@ https://DOMAIN-ANDA/admin/storage-fix      # (login admin dulu)
 ```
 atau jalankan `php artisan storage:fix-prefix` di terminal Laravel Cloud.
 
-### 🧹 Perintah Tambahan
+---
+
+## 🛡️ Perlindungan Form Pendaftaran (Anti-Spam & Anti Data Fiktif)
+
+Form publik `/klinik/create` dilindungi berlapis untuk meminimalkan spam dan data fiktif:
+
+| Lapisan | Mekanisme |
+|---|---|
+| **Honeypot ganda** | 2 field tersembunyi (`company_website`, `fax_number`) — bot yang mengisi ditolak diam-diam (dibalas sukses palsu) |
+| **Time-trap** | `form_started_at` wajib ada & minimal **8 detik** mengisi form |
+| **Cloudflare Turnstile** (opsional) | Aktif bila `TURNSTILE_SITE_KEY`/`TURNSTILE_SECRET_KEY` diset di env |
+| **Rate limit** | Maks **2 submit per 30 menit per IP** (admin login bebas) |
+| **Validasi ketat** | Telepon format Indonesia, koordinat **wajib dalam wilayah Kota Jambi**, harga wajar, foto ≥ 200×200px, larang HTML, nama anti-gibberish |
+| **Anti-duplikat** | Nomor telepon (atau email+nama) yang sama dengan data terdaftar → ditolak |
+
+## 🧹 Perintah Tambahan
 
 ```bash
 # Bersihkan data klinik sampah (ditolak / pending kedaluwarsa / file yatim)

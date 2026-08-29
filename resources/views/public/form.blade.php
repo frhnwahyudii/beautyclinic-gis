@@ -117,6 +117,10 @@
             <label for="company_website">Jangan isi field ini</label>
             <input type="text" name="company_website" id="company_website" tabindex="-1" autocomplete="off">
         </div>
+        <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+            <label for="fax_number">Jangan isi field ini</label>
+            <input type="text" name="fax_number" id="fax_number" tabindex="-1" autocomplete="off">
+        </div>
         <input type="hidden" name="form_started_at" id="form_started_at" value="">
 
         <!-- Section 1: Informasi Klinik -->
@@ -625,11 +629,19 @@
                 </div>
             </div>
         </div>
+        @if(config('services.turnstile.site_key'))
+            <div class="text-center mb-3">
+                <div class="cf-turnstile d-inline-block" data-sitekey="{{ config('services.turnstile.site_key') }}" data-theme="light"></div>
+            </div>
+        @endif
     </form>
 </div>
 @endsection
 
 @push('scripts')
+@if(config('services.turnstile.site_key'))
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+@endif
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Catat waktu render form untuk anti-bot time-trap
