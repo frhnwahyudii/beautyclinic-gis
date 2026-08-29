@@ -206,6 +206,14 @@ aws s3 cp storage/app/public/klinik_photos/ s3://NAMA-BUCKET/klinik_photos/ --re
 #    - Tambahkan bucket policy s3:GetObject pada prefix klinik_photos/*
 ```
 
+**Foto sudah di-upload tapi tetap 404?** Kemungkinan file masuk ke **root bucket**, padahal
+aplikasi membacanya dari folder `klinik_photos/`. Perbaiki otomatis (salin root → `klinik_photos/`,
+tanpa perlu tahu nama bucket) dengan membuka:
+```
+https://DOMAIN-ANDA/admin/storage-fix      # (login admin dulu)
+```
+atau jalankan `php artisan storage:fix-prefix` di terminal Laravel Cloud.
+
 ### 🧹 Perintah Tambahan
 
 ```bash

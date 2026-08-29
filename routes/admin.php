@@ -28,6 +28,17 @@ Route::middleware(['auth', 'is_admin'])->group(function () {
         )->header('Content-Type', 'text/html');
     })->name('admin.storage-check');
 
+    // Perbaiki foto 404: salin objek dari root bucket ke folder klinik_photos/
+    Route::get('/storage-fix', function () {
+        \Illuminate\Support\Facades\Artisan::call('storage:fix-prefix');
+        return response(
+            '<h3 style="font-family:ui-monospace,monospace;padding:1rem 1rem 0;">Perbaikan Prefix Foto</h3>'
+            . '<pre style="font:13px/1.6 ui-monospace,Consolas,monospace;padding:1rem;">'
+            . e(\Illuminate\Support\Facades\Artisan::output())
+            . '</pre>'
+        )->header('Content-Type', 'text/html');
+    })->name('admin.storage-fix');
+
     // Klinik Management
     Route::prefix('kliniks')->group(function () {
         Route::get('/', [AdminKlinikController::class, 'index'])->name('admin.kliniks.index');
