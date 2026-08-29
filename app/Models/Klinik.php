@@ -62,7 +62,10 @@ class Klinik extends Model
     public function getFotoUrlAttribute()
     {
         if ($this->foto) {
-            return asset('storage/klinik_photos/' . $this->foto);
+            // Gunakan disk publik terkonfigurasi (public = lokal/symlink, public_s3 = S3).
+            // Storage::url() otomatis menghasilkan URL yang benar sesuai driver disk.
+            return Storage::disk(config('filesystems.public_disk'))
+                ->url('klinik_photos/' . $this->foto);
         }
         return null;
     }

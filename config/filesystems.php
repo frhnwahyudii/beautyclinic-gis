@@ -17,6 +17,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Public Disk untuk Foto Klinik
+    |--------------------------------------------------------------------------
+    | Disk yang dipakai untuk menyimpan & menyajikan foto klinik.
+    |   - "public"    : lokal (VPS/shared hosting) -> dilayani symlink / rute /storage
+    |   - "public_s3" : S3 / Laravel Cloud          -> dilayani langsung dari bucket
+    | Atur via env: PUBLIC_DISK=public  atau  PUBLIC_DISK=public_s3
+    |
+    */
+    'public_disk' => env('PUBLIC_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -33,7 +45,6 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -42,6 +53,21 @@ return [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'serve' => true,
+            'throw' => false,
+            'report' => false,
+        ],
+
+        'public_s3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

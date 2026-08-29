@@ -169,6 +169,28 @@ Buka **http://127.0.0.1:8000** di browser.
 
 ---
 
+## ☁️ Deploy & Penyimpanan Foto (Produksi)
+
+### VPS / Shared Hosting
+```bash
+# Tautkan storage agar foto dapat diakses via /storage/...
+php artisan storage:link
+
+# Atur di .env
+APP_URL=https://domain-anda.com
+PUBLIC_DISK=public
+```
+
+### Laravel Cloud / S3 (disarankan untuk penyimpanan persisten)
+```bash
+# Atur di .env (kredensial AWS otomatis di-inject Laravel Cloud)
+PUBLIC_DISK=public_s3
+```
+- Upload file foto yang sudah ada ke bucket S3 di folder `klinik_photos/`
+- URL foto otomatis mengarah ke S3 (tanpa symlink, persisten)
+
+---
+
 ## 🧹 Perintah Tambahan
 
 ```bash

@@ -82,11 +82,11 @@ class AdminKlinikController extends Controller
 
         if ($request->hasFile('foto')) {
             if ($klinik->foto) {
-                Storage::disk('public')->delete('klinik_photos/' . $klinik->foto);
+                Storage::disk(config('filesystems.public_disk'))->delete('klinik_photos/' . $klinik->foto);
             }
             $foto = $request->file('foto');
             $fotoName = time() . '_' . Str::slug($request->nama) . '.' . $foto->getClientOriginalExtension();
-            $foto->storeAs('klinik_photos', $fotoName, 'public');
+            $foto->storeAs('klinik_photos', $fotoName, config('filesystems.public_disk'));
             $validatedData['foto'] = $fotoName;
         }
 
@@ -102,7 +102,7 @@ class AdminKlinikController extends Controller
     public function destroy(Klinik $klinik)
     {
         if ($klinik->foto) {
-            Storage::delete('public/klinik_photos/' . $klinik->foto);
+            Storage::disk(config('filesystems.public_disk'))->delete('klinik_photos/' . $klinik->foto);
         }
 
         $klinik->delete();

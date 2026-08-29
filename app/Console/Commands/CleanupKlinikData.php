@@ -40,7 +40,7 @@ class CleanupKlinikData extends Command
 
         foreach ($rejected as $klinik) {
             if ($klinik->foto) {
-                Storage::delete('public/klinik_photos/' . $klinik->foto);
+                Storage::disk(config('filesystems.public_disk'))->delete('klinik_photos/' . $klinik->foto);
             }
             $klinik->delete();
         }
@@ -54,7 +54,7 @@ class CleanupKlinikData extends Command
 
         foreach ($pending as $klinik) {
             if ($klinik->foto) {
-                Storage::delete('public/klinik_photos/' . $klinik->foto);
+                Storage::disk(config('filesystems.public_disk'))->delete('klinik_photos/' . $klinik->foto);
             }
             $klinik->delete();
         }
@@ -62,11 +62,11 @@ class CleanupKlinikData extends Command
 
         // 3. Hapus foto "yatim" — file di storage tanpa data klinik di database
         $orphaned = 0;
-        $files = Storage::files('public/klinik_photos');
+        $files = Storage::disk(config('filesystems.public_disk'))->files('klinik_photos');
         foreach ($files as $file) {
             $fileName = basename($file);
             if (! Klinik::where('foto', $fileName)->exists()) {
-                Storage::delete($file);
+                Storage::disk(config('filesystems.public_disk'))->delete($file);
                 $orphaned++;
             }
         }
