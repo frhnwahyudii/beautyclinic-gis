@@ -13,7 +13,47 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>SIG Klinik Kecantikan Kota Jambi</title>
+
+    <!-- SEO Meta -->
+    @php
+        $seoTitle = 'SIG Klinik Kecantikan Kota Jambi — Peta dan Direktori Klinik Kecantikan';
+        $seoDescription = 'Temukan klinik kecantikan di Kota Jambi melalui peta interaktif SIG: alamat, layanan perawatan kulit dan kecantikan, harga, jam operasional, serta kontak lengkap.';
+        $seoRobots = 'index, follow';
+        $seoCanonical = url('/');
+        $seoImage = '';
+        $seoType = 'website';
+    @endphp
+    @push('seo-jsonld')
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "WebSite",
+                "@id": "{{ url('/') }}#website",
+                "url": "{{ url('/') }}",
+                "name": "SIG Klinik Kecantikan Kota Jambi",
+                "description": "Direktori dan peta klinik kecantikan di Kota Jambi.",
+                "inLanguage": "id-ID"
+            },
+            {
+                "@type": "Organization",
+                "@id": "{{ url('/') }}#organization",
+                "url": "{{ url('/') }}",
+                "name": "SIG Klinik Kecantikan Kota Jambi",
+                "description": "Sistem Informasi Geografis klinik kecantikan di Kota Jambi.",
+                "areaServed": { "@type": "City", "name": "Kota Jambi" },
+                "contactPoint": {
+                    "@type": "ContactPoint",
+                    "contactType": "customer service",
+                    "email": "hello@frhnwahyudi.xyz"
+                }
+            }
+        ]
+    }
+    </script>
+    @endpush
+    @include('partials.seo-head')
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

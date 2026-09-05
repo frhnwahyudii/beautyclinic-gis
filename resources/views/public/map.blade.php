@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('title', 'Peta Klinik Kecantikan Kota Jambi')
+@section('meta_description', 'Peta interaktif dan direktori klinik kecantikan di Kota Jambi. Cari dan filter klinik berdasarkan nama, harga perawatan, serta jenis layanan untuk menemukan klinik yang tepat.')
+@section('canonical', route('klinik.map'))
 
 @push('styles')
 <style>

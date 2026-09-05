@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\KlinikController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Models\Klinik;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +29,47 @@ Route::post('/logout', [LoginController::class, 'logout'])
 Route::get('/', function () {
     return view('landing');
 })->name('home');
+
+// Sitemap dinamis (hanya URL yang boleh diindeks).
+// Ditempatkan sebelum rute /klinik/{klinik} agar tidak tertangkap parameter.
+Route::get('/sitemap.xml', function () {
+    $latestChange = Klinik::where('status', 'approved')->max('updated_at');
+    $latestLastmod = $latestChange ? Carbon::parse($latestChange)->toDateString() : null;
+
+    $urls = [
+        [
+            'loc' => route('home'),
+            'lastmod' => $latestLastmod,
+            'changefreq' => 'daily',
+            'priority' => '1.0',
+        ],
+        [
+            'loc' => route('klinik.map'),
+            'lastmod' => $latestLastmod,
+            'changefreq' => 'daily',
+            'priority' => '0.9',
+        ],
+    ];
+
+    $approvedKliniks = Klinik::where('status', 'approved')
+        ->orderBy('updated_at', 'desc')
+        ->get(['id', 'updated_at']);
+
+    foreach ($approvedKliniks as $klinik) {
+        $urls[] = [
+            'loc' => route('klinik.show', $klinik),
+            'lastmod' => optional($klinik->updated_at)->toDateString(),
+            'changefreq' => 'weekly',
+            'priority' => '0.8',
+        ];
+    }
+
+    return response()
+        ->view('sitemap', ['urls' => $urls])
+        ->header('Content-Type', 'application/xml; charset=UTF-8')
+        ->header('Cache-Control', 'public, max-age=3600');
+})->name('sitemap');
+
 Route::get('/klinik/map', [KlinikController::class, 'index'])->name('klinik.map');
 Route::get('/klinik/create', [KlinikController::class, 'create'])->name('klinik.create');
 Route::post('/klinik', [KlinikController::class, 'store'])->name('klinik.store')->middleware('throttle:klinik-submit');

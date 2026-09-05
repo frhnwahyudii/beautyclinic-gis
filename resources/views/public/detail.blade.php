@@ -1,6 +1,75 @@
 @extends('layouts.app')
 
+@php
+    // ── SEO: metadata dinamis per klinik ──
+    $seoIndexStatus = $klinik->status === 'approved';
+    $seoCanonicalUrl = route('klinik.show', $klinik);
+
+    $seoDescRaw = trim((string) preg_replace('/\s+/', ' ', strip_tags((string) $klinik->deskripsi)));
+    if ($seoDescRaw === '') {
+        $seoDescRaw = trim((string) preg_replace('/\s+/', ' ', strip_tags((string) $klinik->alamat)));
+    }
+    $seoMetaDescription = $seoDescRaw !== '' ? mb_strimwidth($seoDescRaw, 0, 155, '…') : '';
+
+    $seoSameAs = [];
+    if (! empty($klinik->website)) {
+        $seoSameAs[] = preg_match('#^https?://#i', (string) $klinik->website)
+            ? (string) $klinik->website
+            : 'https://'.ltrim((string) $klinik->website, '/');
+    }
+    if (! empty($klinik->instagram)) { $seoSameAs[] = 'https://www.instagram.com/'.ltrim((string) $klinik->instagram, '@'); }
+    if (! empty($klinik->facebook))  { $seoSameAs[] = 'https://www.facebook.com/'.ltrim((string) $klinik->facebook, '@'); }
+    if (! empty($klinik->twitter))   { $seoSameAs[] = 'https://x.com/'.ltrim((string) $klinik->twitter, '@'); }
+
+    $seoPhoneDigits = (string) preg_replace('/\D/', '', (string) $klinik->telepon);
+    $seoPhone = $seoPhoneDigits === ''
+        ? ''
+        : (str_starts_with($seoPhoneDigits, '62')
+            ? '+'.$seoPhoneDigits
+            : '+62'.ltrim($seoPhoneDigits, '0'));
+
+    // Skema JSON-LD LocalBusiness (hanya klinik yang disetujui).
+    $seoJsonLd = $seoIndexStatus ? [
+        '@context' => 'https://schema.org',
+        '@type' => 'BeautySalon',
+        '@id' => $seoCanonicalUrl.'#klinik',
+        'name' => $klinik->nama,
+        'url' => $seoCanonicalUrl,
+        'image' => $klinik->foto_url,
+        'description' => $seoDescRaw !== '' ? mb_strimwidth($seoDescRaw, 0, 300, '…') : null,
+        'telephone' => $seoPhone !== '' ? $seoPhone : null,
+        'priceRange' => $klinik->price_range_display,
+        'address' => [
+            '@type' => 'PostalAddress',
+            'streetAddress' => $klinik->alamat,
+            'addressLocality' => 'Kota Jambi',
+            'addressRegion' => 'Jambi',
+            'addressCountry' => 'ID',
+        ],
+        'geo' => [
+            '@type' => 'GeoCoordinates',
+            'latitude' => (float) $klinik->latitude,
+            'longitude' => (float) $klinik->longitude,
+        ],
+        'sameAs' => $seoSameAs,
+        'currenciesAccepted' => 'IDR',
+    ] : null;
+@endphp
+
 @section('title', $klinik->nama)
+@section('meta_description', $seoMetaDescription)
+@section('canonical', $seoCanonicalUrl)
+@section('robots', $seoIndexStatus ? 'index, follow' : 'noindex, follow')
+@section('og_image', (string) $klinik->foto_url)
+@section('og_type', 'website')
+
+@if($seoIndexStatus)
+@push('seo-jsonld')
+<script type="application/ld+json">
+{!! json_encode($seoJsonLd, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_PRETTY_PRINT) !!}
+</script>
+@endpush
+@endif
 
 @push('styles')
 <style>

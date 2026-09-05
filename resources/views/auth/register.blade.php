@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Daftar')
+@section('robots', 'noindex, follow')
 
 @push('styles')
 <style>

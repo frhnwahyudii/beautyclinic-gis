@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Daftarkan Klinik Baru')
+@section('title', 'Daftarkan Klinik Kecantikan Baru di Kota Jambi')
+@section('robots', 'noindex, follow')
 
 @push('styles')
 <style>

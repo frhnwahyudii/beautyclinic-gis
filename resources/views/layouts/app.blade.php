@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'SIG Klinik Kecantikan Kota Jambi')</title>
+
+    <!-- SEO Meta -->
+    @php
+        $seoTitle = trim((string) ($__env->yieldContent('title') ?: 'SIG Klinik Kecantikan Kota Jambi'));
+        if (! str_contains($seoTitle, 'SIG Klinik')) {
+            $seoTitle .= ' | SIG Klinik Kecantikan Kota Jambi';
+        }
+        $seoDescription = trim((string) $__env->yieldContent('meta_description'));
+        $seoRobots = trim((string) $__env->yieldContent('robots'));
+        $seoCanonical = trim((string) $__env->yieldContent('canonical'));
+        $seoImage = trim((string) $__env->yieldContent('og_image'));
+        $seoType = trim((string) $__env->yieldContent('og_type'));
+    @endphp
+    @include('partials.seo-head')
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
